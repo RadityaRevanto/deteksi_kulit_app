@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/widgets/loading_widget.dart';
 import '../../data/datasources/history_remote_data_source.dart';
 import '../../data/repositories/history_repository_impl.dart';
@@ -22,15 +23,12 @@ class HistoryPage extends StatelessWidget {
         return HistoryBloc(useCase)..add(HistoryRequested());
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Riwayat Deteksi'),
-        ),
+        appBar: AppBar(title: const Text('Riwayat Deteksi')),
         body: BlocBuilder<HistoryBloc, HistoryState>(
           builder: (context, state) {
             if (state is HistoryLoading) {
               return const LoadingWidget(message: 'Memuat riwayat...');
             }
-
             if (state is HistoryFailure) {
               return Center(
                 child: Column(
@@ -48,14 +46,12 @@ class HistoryPage extends StatelessWidget {
                 ),
               );
             }
-
             if (state is HistoryLoaded) {
               if (state.histories.isEmpty) {
                 return const Center(
                   child: Text('Belum ada riwayat pemindaian'),
                 );
               }
-
               return RefreshIndicator(
                 onRefresh: () async {
                   context.read<HistoryBloc>().add(HistoryRefreshed());
@@ -70,7 +66,6 @@ class HistoryPage extends StatelessWidget {
                 ),
               );
             }
-
             return const SizedBox.shrink();
           },
         ),

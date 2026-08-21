@@ -63,7 +63,9 @@ class HomePage extends StatelessWidget {
                       title: 'Konsultasi Dokter',
                       icon: LucideIcons.stethoscope,
                       color: primaryGreen,
-                      onTap: () {},
+                      onTap: () {
+                        context.push(AppRouter.konfirmasiDokter);
+                      },
                     ),
                   ),
                   Expanded(

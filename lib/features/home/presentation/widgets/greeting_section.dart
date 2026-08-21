@@ -24,8 +24,8 @@ class GreetingSection extends StatelessWidget {
         Row(
           children: [
             Container(
-              width: 48,
-              height: 48,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: const LinearGradient(
@@ -76,8 +76,6 @@ class GreetingSection extends StatelessWidget {
                         letterSpacing: -0.3,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    const Text('👋', style: TextStyle(fontSize: 14)),
                   ],
                 ),
               ],
@@ -117,7 +115,7 @@ class GreetingSection extends StatelessWidget {
                     width: 7,
                     height: 7,
                     decoration: const BoxDecoration(
-                      color: primaryGreen,
+                      color: Color.fromARGB(255, 219, 8, 8),
                       shape: BoxShape.circle,
                     ),
                   ),

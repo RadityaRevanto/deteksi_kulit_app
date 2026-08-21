@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../app/routes/app_router.dart';
 import '../widgets/condition_card.dart';
 import '../widgets/other_probabilities_card.dart';
 import '../widgets/ai_summary_card.dart';
@@ -41,7 +42,7 @@ class HasilScanPage extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'Hasil Analisis AI',
-                      textAlign: TextAlign.center,
+                      textAlign: TextAlign.start,
                       style: GoogleFonts.roboto(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -49,11 +50,10 @@ class HasilScanPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 48), // Balance back button width
+                  const SizedBox(width: 48),
                 ],
               ),
             ),
-
             // 2. Scrollable Body Content
             Expanded(
               child: SingleChildScrollView(
@@ -64,47 +64,9 @@ class HasilScanPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // AI Version Badge
-                    Center(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: lightGreenBg,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: primaryGreen.withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              LucideIcons.sparkles,
-                              size: 14,
-                              color: darkGreen,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              'AI Skin Analysis v2.4',
-                              style: GoogleFonts.roboto(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: darkGreen,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
                     // Card 1: Kemungkinan Kondisi & Keyakinan
                     const ConditionCard(),
                     const SizedBox(height: 16),
-
                     // Card 2: Probabilitas Masalah Kulit Lain
                     const OtherProbabilitiesCard(),
                     const SizedBox(height: 16),
@@ -135,14 +97,7 @@ class HasilScanPage extends StatelessWidget {
                     height: 48,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Mengarahkan ke konsultasi dokter...',
-                            ),
-                            backgroundColor: darkGreen,
-                          ),
-                        );
+                        context.push(AppRouter.konfirmasiDokter);
                       },
                       icon: const Icon(
                         LucideIcons.stethoscope,
