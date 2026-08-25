@@ -1,4 +1,5 @@
 import '../../../../core/widgets/app_status_dialog.dart';
+
 import 'package:deteksi_kulit/features/auth/presentation/widgets/auth_divider.dart';
 import 'package:deteksi_kulit/features/auth/presentation/widgets/auth_footer_link.dart';
 import 'package:deteksi_kulit/features/auth/presentation/widgets/auth_primary_button.dart';
@@ -80,18 +81,7 @@ class _RegisterPageState extends State<RegisterPage> {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticated) {
-              AppStatusDialog.show(
-                context: context,
-                title: 'Pendaftaran Berhasil',
-                message: 'Akun Anda telah berhasil dibuat. Silakan masuk.',
-                type: AppStatusDialogType.success,
-                buttonText: 'Masuk Sekarang',
-                barrierDismissible: false,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  context.go(AppRouter.login);
-                },
-              );
+              context.go(AppRouter.login);
             } else if (state is AuthFailure) {
               AppStatusDialog.show(
                 context: context,
@@ -242,4 +232,3 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 }
-  

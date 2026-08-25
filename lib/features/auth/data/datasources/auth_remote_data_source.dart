@@ -60,7 +60,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> logout() async {
-    // If logout endpoint is available
-    await Future.delayed(const Duration(milliseconds: 300));
+    try {
+      await apiClient.post(ApiConstants.logoutEndpoint);
+    } catch (_) {
+      // Best-effort logout attempt on server
+    }
   }
 }

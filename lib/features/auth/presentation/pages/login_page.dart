@@ -1,4 +1,5 @@
 import '../../../../core/widgets/app_status_dialog.dart';
+
 import 'package:deteksi_kulit/features/auth/presentation/widgets/auth_divider.dart';
 import 'package:deteksi_kulit/features/auth/presentation/widgets/auth_footer_link.dart';
 import 'package:deteksi_kulit/features/auth/presentation/widgets/auth_primary_button.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../../../../app/routes/app_router.dart';
 import '../bloc/auth/auth_bloc.dart';
 import '../bloc/auth/auth_event.dart';
@@ -52,18 +54,7 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticated) {
-              AppStatusDialog.show(
-                context: context,
-                title: 'Login Berhasil',
-                message: 'Selamat Datang, ${state.user.name}!',
-                type: AppStatusDialogType.success,
-                buttonText: 'Lanjutkan',
-                barrierDismissible: false,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  context.go(AppRouter.main);
-                },
-              );
+              context.go(AppRouter.main);
             } else if (state is AuthFailure) {
               AppStatusDialog.show(
                 context: context,

@@ -13,5 +13,9 @@ abstract class AuthRepository {
     bool privacyConsent = true,
   });
 
+  Future<User?> getSavedUser();
+
+  Future<String?> getToken();
+
   Future<void> logout();
 }
