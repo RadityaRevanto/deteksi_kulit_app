@@ -17,3 +17,15 @@ class ProfileFailure extends ProfileState {
 
   ProfileFailure(this.message);
 }
+
+class ProfileAccountDeletedSuccess extends ProfileState {}
+
+class ProfileDataExportSuccess extends ProfileState {
+  final String downloadUrl;
+  final int expiresInMinutes;
+
+  ProfileDataExportSuccess({
+    required this.downloadUrl,
+    required this.expiresInMinutes,
+  });
+}

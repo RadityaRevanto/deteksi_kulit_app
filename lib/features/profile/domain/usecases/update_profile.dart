@@ -6,7 +6,7 @@ class UpdateProfile {
 
   UpdateProfile(this.repository);
 
-  Future<UserProfile> call(String name) async {
-    return await repository.updateProfile(name);
+  Future<UserProfile> call(String name, {String? gender, String? dateOfBirth}) async {
+    return await repository.updateProfile(name, gender: gender, dateOfBirth: dateOfBirth);
   }
 }

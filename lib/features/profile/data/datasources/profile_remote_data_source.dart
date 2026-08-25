@@ -1,34 +1,63 @@
+import '../../../../core/constants/api_constants.dart';
+import '../../../../core/network/api_client.dart';
 import '../models/profile_model.dart';
 
 abstract class ProfileRemoteDataSource {
   Future<ProfileModel> getProfile();
-  Future<ProfileModel> updateProfile(String name);
+  Future<ProfileModel> updateProfile(String name, {String? gender, String? dateOfBirth});
+  Future<ProfileModel> deleteAvatar();
+  Future<void> deleteAccount();
+  Future<Map<String, dynamic>> exportData();
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
-  ProfileModel _currentProfile = const ProfileModel(
-    id: 'user_101',
-    name: 'Ahmad User',
-    email: 'ahmad.user@example.com',
-    bio: 'Pemerhati kesehatan kulit harian.',
-  );
+  final ApiClient apiClient;
+
+  ProfileRemoteDataSourceImpl({ApiClient? apiClient})
+      : apiClient = apiClient ?? ApiClientImpl();
 
   @override
   Future<ProfileModel> getProfile() async {
-    await Future.delayed(const Duration(milliseconds: 600));
-    return _currentProfile;
+    final response = await apiClient.get(ApiConstants.profileEndpoint);
+    return ProfileModel.fromJson(response);
   }
 
   @override
-  Future<ProfileModel> updateProfile(String name) async {
-    await Future.delayed(const Duration(milliseconds: 600));
-    _currentProfile = ProfileModel(
-      id: _currentProfile.id,
-      name: name,
-      email: _currentProfile.email,
-      avatarUrl: _currentProfile.avatarUrl,
-      bio: _currentProfile.bio,
+  Future<ProfileModel> updateProfile(String name, {String? gender, String? dateOfBirth}) async {
+    final body = <String, dynamic>{
+      'full_name': name,
+    };
+    if (gender != null && gender.isNotEmpty) {
+      body['gender'] = gender;
+    }
+    if (dateOfBirth != null && dateOfBirth.isNotEmpty) {
+      body['date_of_birth'] = dateOfBirth;
+    }
+
+    final response = await apiClient.post(
+      ApiConstants.profileEndpoint,
+      body: body,
     );
-    return _currentProfile;
+    return ProfileModel.fromJson(response);
+  }
+
+  @override
+  Future<ProfileModel> deleteAvatar() async {
+    final response = await apiClient.delete('${ApiConstants.profileEndpoint}/avatar');
+    return ProfileModel.fromJson(response);
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    await apiClient.delete(ApiConstants.profileEndpoint);
+  }
+
+  @override
+  Future<Map<String, dynamic>> exportData() async {
+    final response = await apiClient.post('${ApiConstants.profileEndpoint}/export');
+    if (response.containsKey('data') && response['data'] is Map<String, dynamic>) {
+      return response['data'] as Map<String, dynamic>;
+    }
+    return response;
   }
 }
