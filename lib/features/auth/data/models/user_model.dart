@@ -9,18 +9,23 @@ class UserModel extends User {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    // Handle backend envelope: data could be {"data": {"user": {...}, "token": "..."}} or flat
+    final data = (json['data'] is Map<String, dynamic>) ? json['data'] as Map<String, dynamic> : json;
+    final userJson = (data['user'] is Map<String, dynamic>) ? data['user'] as Map<String, dynamic> : data;
+    final tokenStr = data['token'] as String? ?? json['token'] as String?;
+
     return UserModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      email: json['email'] as String,
-      token: json['token'] as String?,
+      id: (userJson['uuid'] ?? userJson['id'] ?? '') as String,
+      name: (userJson['full_name'] ?? userJson['name'] ?? '') as String,
+      email: (userJson['email'] ?? '') as String,
+      token: tokenStr,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'name': name,
+      'uuid': id,
+      'full_name': name,
       'email': email,
       'token': token,
     };

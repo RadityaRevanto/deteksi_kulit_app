@@ -23,13 +23,6 @@ class AuthPrimaryButton extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(11),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x3D00BF83),
-              blurRadius: 22,
-              offset: Offset(0, 11),
-            ),
-          ],
         ),
         child: ElevatedButton(
           onPressed: isLoading ? null : onPressed,
@@ -37,7 +30,9 @@ class AuthPrimaryButton extends StatelessWidget {
             elevation: 0,
             shadowColor: Colors.transparent,
             backgroundColor: primaryGreen,
+            disabledBackgroundColor: primaryGreen,
             foregroundColor: Colors.white,
+            disabledForegroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(11),
             ),

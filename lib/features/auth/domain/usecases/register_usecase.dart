@@ -10,7 +10,13 @@ class RegisterUseCase {
     required String name,
     required String email,
     required String password,
+    bool privacyConsent = true,
   }) async {
-    return await repository.register(name: name, email: email, password: password);
+    return await repository.register(
+      name: name,
+      email: email,
+      password: password,
+      privacyConsent: privacyConsent,
+    );
   }
 }

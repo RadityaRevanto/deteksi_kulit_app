@@ -14,11 +14,13 @@ class AuthRegisterRequested extends AuthEvent {
   final String name;
   final String email;
   final String password;
+  final bool privacyConsent;
 
   AuthRegisterRequested({
     required this.name,
     required this.email,
     required this.password,
+    this.privacyConsent = true,
   });
 }
 

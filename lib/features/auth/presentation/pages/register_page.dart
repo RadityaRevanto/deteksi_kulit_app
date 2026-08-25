@@ -1,3 +1,4 @@
+import '../../../../core/widgets/app_status_dialog.dart';
 import 'package:deteksi_kulit/features/auth/presentation/widgets/auth_divider.dart';
 import 'package:deteksi_kulit/features/auth/presentation/widgets/auth_footer_link.dart';
 import 'package:deteksi_kulit/features/auth/presentation/widgets/auth_primary_button.dart';
@@ -28,6 +29,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _confirmPasswordController = TextEditingController();
 
   bool _obscurePassword = true;
+  bool _privacyConsent = false;
 
   @override
   void dispose() {
@@ -40,11 +42,31 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _onRegisterPressed() {
     if (_formKey.currentState?.validate() ?? false) {
+      if (_passwordController.text != _confirmPasswordController.text) {
+        AppStatusDialog.show(
+          context: context,
+          title: 'Validasi Gagal',
+          message: 'Konfirmasi password tidak sesuai.',
+          type: AppStatusDialogType.error,
+        );
+        return;
+      }
+      if (!_privacyConsent) {
+        AppStatusDialog.show(
+          context: context,
+          title: 'Persetujuan Privasi',
+          message: 'Anda harus menyetujui Kebijakan Privasi untuk mendaftar.',
+          type: AppStatusDialogType.error,
+        );
+        return;
+      }
+
       context.read<AuthBloc>().add(
         AuthRegisterRequested(
           name: _nameController.text.trim(),
           email: _emailController.text.trim(),
           password: _passwordController.text,
+          privacyConsent: _privacyConsent,
         ),
       );
     }
@@ -58,23 +80,25 @@ class _RegisterPageState extends State<RegisterPage> {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticated) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Pendaftaran berhasil! Selamat datang.'),
-                ),
-              );
-
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                AppRouter.main,
-                (route) => false,
+              AppStatusDialog.show(
+                context: context,
+                title: 'Pendaftaran Berhasil',
+                message: 'Akun Anda telah berhasil dibuat. Silakan masuk.',
+                type: AppStatusDialogType.success,
+                buttonText: 'Masuk Sekarang',
+                barrierDismissible: false,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  context.go(AppRouter.login);
+                },
               );
             } else if (state is AuthFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.red,
-                ),
+              AppStatusDialog.show(
+                context: context,
+                title: 'Pendaftaran Gagal',
+                message: state.message,
+                type: AppStatusDialogType.error,
+                buttonText: 'Tutup',
               );
             }
           },
@@ -132,7 +156,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       hintText: 'Masukkan password',
                       icon: Icons.lock_outline_rounded,
                       controller: _passwordController,
-                      obscureText: !_obscurePassword,
+                      obscureText: _obscurePassword,
                       suffixIcon: IconButton(
                         onPressed: () {
                           setState(() {
@@ -141,8 +165,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         },
                         icon: Icon(
                           _obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           size: 18,
                           color: const Color(0xFF9DA0AA),
                         ),
@@ -154,7 +178,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       hintText: 'Masukkan ulang password',
                       icon: Icons.lock_outline_rounded,
                       controller: _confirmPasswordController,
-                      obscureText: !_obscurePassword,
+                      obscureText: _obscurePassword,
                       suffixIcon: IconButton(
                         onPressed: () {
                           setState(() {
@@ -163,16 +187,39 @@ class _RegisterPageState extends State<RegisterPage> {
                         },
                         icon: Icon(
                           _obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           size: 18,
                           color: const Color(0xFF9DA0AA),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _privacyConsent,
+                          activeColor: Theme.of(context).primaryColor,
+                          onChanged: (val) {
+                            setState(() {
+                              _privacyConsent = val ?? false;
+                            });
+                          },
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Saya menyetujui Kebijakan Privasi & Syarat Ketentuan',
+                            style: GoogleFonts.roboto(
+                              fontSize: 13,
+                              color: const Color(0xFF5A6360),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
                     AuthPrimaryButton(
-                      text: 'Daftar',
+                      text: isLoading ? 'Memproses...' : 'Daftar',
                       onPressed: isLoading ? null : _onRegisterPressed,
                     ),
                     const SizedBox(height: 20),

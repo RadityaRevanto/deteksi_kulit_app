@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../core/network/api_client.dart';
 import '../core/theme/app_theme.dart';
 
 import '../features/auth/data/datasources/auth_remote_data_source.dart';
@@ -22,9 +23,15 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider<ApiClient>(
+          create: (_) => ApiClientImpl(),
+        ),
         RepositoryProvider<AuthRepository>(
-          create: (_) =>
-              AuthRepositoryImpl(remoteDataSource: AuthRemoteDataSourceImpl()),
+          create: (context) => AuthRepositoryImpl(
+            remoteDataSource: AuthRemoteDataSourceImpl(
+              apiClient: context.read<ApiClient>(),
+            ),
+          ),
         ),
       ],
       child: MultiBlocProvider(

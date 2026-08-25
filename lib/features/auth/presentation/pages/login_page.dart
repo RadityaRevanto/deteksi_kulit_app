@@ -1,3 +1,4 @@
+import '../../../../core/widgets/app_status_dialog.dart';
 import 'package:deteksi_kulit/features/auth/presentation/widgets/auth_divider.dart';
 import 'package:deteksi_kulit/features/auth/presentation/widgets/auth_footer_link.dart';
 import 'package:deteksi_kulit/features/auth/presentation/widgets/auth_primary_button.dart';
@@ -51,16 +52,25 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticated) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Selamat datang, ${state.user.name}!')),
+              AppStatusDialog.show(
+                context: context,
+                title: 'Login Berhasil',
+                message: 'Selamat Datang, ${state.user.name}!',
+                type: AppStatusDialogType.success,
+                buttonText: 'Lanjutkan',
+                barrierDismissible: false,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  context.go(AppRouter.main);
+                },
               );
-              Navigator.pushReplacementNamed(context, AppRouter.main);
             } else if (state is AuthFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.red,
-                ),
+              AppStatusDialog.show(
+                context: context,
+                title: 'Gagal Masuk',
+                message: state.message,
+                type: AppStatusDialogType.error,
+                buttonText: 'Tutup',
               );
             }
           },
@@ -73,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AuthHeader(),
+                    const AuthHeader(),
                     const SizedBox(height: 20),
                     Text(
                       'Selamat datang\nkembali 👋',
@@ -82,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                         height: 1.15,
                         letterSpacing: -1.2,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF171A19),
+                        color: const Color(0xFF171A19),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -93,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                         fontSize: 14,
                         height: 1.6,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xFF7D8581),
+                        color: const Color(0xFF7D8581),
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -110,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                       hintText: 'Masukkan password',
                       icon: Icons.lock_outline_rounded,
                       controller: _passwordController,
-                      obscureText: !_obscurePassword,
+                      obscureText: _obscurePassword,
                       suffixIcon: IconButton(
                         onPressed: () {
                           setState(() {
@@ -119,8 +129,8 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         icon: Icon(
                           _obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           size: 18,
                           color: const Color(0xFF9DA0AA),
                         ),
@@ -135,13 +145,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 24),
                     AuthPrimaryButton(
-                      text: 'Masuk',
-                      onPressed: isLoading
-                          ? null
-                          : () {
-                              _onLoginPressed();
-                              context.go(AppRouter.main);
-                            },
+                      text: isLoading ? 'Memproses...' : 'Masuk',
+                      onPressed: isLoading ? null : _onLoginPressed,
                       isLoading: isLoading,
                     ),
                     const SizedBox(height: 20),

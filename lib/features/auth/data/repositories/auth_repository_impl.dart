@@ -20,11 +20,13 @@ class AuthRepositoryImpl implements AuthRepository {
     required String name,
     required String email,
     required String password,
+    bool privacyConsent = true,
   }) async {
     return await remoteDataSource.register(
       name: name,
       email: email,
       password: password,
+      privacyConsent: privacyConsent,
     );
   }
 

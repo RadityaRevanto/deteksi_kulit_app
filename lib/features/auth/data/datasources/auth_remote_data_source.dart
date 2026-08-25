@@ -1,5 +1,6 @@
+import '../../../../core/constants/api_constants.dart';
+import '../../../../core/network/api_client.dart';
 import '../models/user_model.dart';
-import '../../../../core/error/exceptions.dart';
 
 abstract class AuthRemoteDataSource {
   Future<UserModel> login({
@@ -11,36 +12,31 @@ abstract class AuthRemoteDataSource {
     required String name,
     required String email,
     required String password,
+    bool privacyConsent = true,
   });
 
   Future<void> logout();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
+  final ApiClient apiClient;
+
+  AuthRemoteDataSourceImpl({ApiClient? apiClient})
+      : apiClient = apiClient ?? ApiClientImpl();
+
   @override
   Future<UserModel> login({
     required String email,
     required String password,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 1000));
-
-    if (email == 'user@example.com' && password == 'password123') {
-      return const UserModel(
-        id: 'usr_001',
-        name: 'Ahmad User',
-        email: 'user@example.com',
-        token: 'mock_jwt_token_123456',
-      );
-    } else if (password == 'error') {
-      throw const ServerException('Email atau password salah.');
-    }
-
-    return UserModel(
-      id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
-      name: email.split('@').first,
-      email: email,
-      token: 'mock_jwt_token_${DateTime.now().millisecondsSinceEpoch}',
+    final response = await apiClient.post(
+      ApiConstants.loginEndpoint,
+      body: {
+        'email': email,
+        'password': password,
+      },
     );
+    return UserModel.fromJson(response);
   }
 
   @override
@@ -48,19 +44,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String name,
     required String email,
     required String password,
+    bool privacyConsent = true,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 1000));
-
-    return UserModel(
-      id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
-      name: name,
-      email: email,
-      token: 'mock_jwt_token_${DateTime.now().millisecondsSinceEpoch}',
+    final response = await apiClient.post(
+      ApiConstants.registerEndpoint,
+      body: {
+        'full_name': name,
+        'email': email,
+        'password': password,
+        'privacy_consent': privacyConsent,
+      },
     );
+    return UserModel.fromJson(response);
   }
 
   @override
   Future<void> logout() async {
+    // If logout endpoint is available
     await Future.delayed(const Duration(milliseconds: 300));
   }
 }
