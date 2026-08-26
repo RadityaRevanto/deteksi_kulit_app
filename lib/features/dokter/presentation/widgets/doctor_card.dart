@@ -47,17 +47,30 @@ class DoctorCard extends StatelessWidget {
                     width: 56,
                     height: 56,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE6F8F2),
+                      color: doctor.isAiBot ? const Color(0xFFF0FDFA) : const Color(0xFFE6F8F2),
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: const Color(0xFF00BF83).withValues(alpha: 0.3),
                         width: 1.5,
                       ),
                     ),
-                    child: const Icon(
-                      LucideIcons.userCheck,
-                      color: Color(0xFF008D68),
-                      size: 26,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(28),
+                      child: (doctor.avatarUrl.isNotEmpty && doctor.avatarUrl.startsWith('http'))
+                          ? Image.network(
+                              doctor.avatarUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => Icon(
+                                doctor.isAiBot ? LucideIcons.bot : LucideIcons.userCheck,
+                                color: const Color(0xFF008D68),
+                                size: 26,
+                              ),
+                            )
+                          : Icon(
+                              doctor.isAiBot ? LucideIcons.bot : LucideIcons.userCheck,
+                              color: const Color(0xFF008D68),
+                              size: 26,
+                            ),
                     ),
                   ),
                   if (doctor.isOnline)
@@ -179,11 +192,11 @@ class DoctorCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    feeFormatted,
+                    doctor.isAiBot ? 'Gratis (AI Bot)' : feeFormatted,
                     style: GoogleFonts.roboto(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
-                      color: const Color(0xFF151918),
+                      color: doctor.isAiBot ? const Color(0xFF008D68) : const Color(0xFF151918),
                     ),
                   ),
                 ],

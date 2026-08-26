@@ -1,6 +1,7 @@
 class Doctor {
   final String id;
   final String name;
+  final String? title;
   final String specialist;
   final String hospital;
   final double rating;
@@ -9,10 +10,12 @@ class Doctor {
   final int consultationFee;
   final bool isOnline;
   final String avatarUrl;
+  final bool isAiBot;
 
   const Doctor({
     required this.id,
     required this.name,
+    this.title,
     required this.specialist,
     required this.hospital,
     required this.rating,
@@ -21,5 +24,6 @@ class Doctor {
     required this.consultationFee,
     required this.isOnline,
     required this.avatarUrl,
+    this.isAiBot = false,
   });
 }
