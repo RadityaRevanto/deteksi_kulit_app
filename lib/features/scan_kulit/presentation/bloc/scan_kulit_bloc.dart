@@ -1,9 +1,20 @@
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../../domain/usecases/perform_scan_upload.dart';
 import 'scan_kulit_event.dart';
 import 'scan_kulit_state.dart';
 
 class ScanKulitBloc extends Bloc<ScanKulitEvent, ScanKulitState> {
-  ScanKulitBloc() : super(const ScanKulitState()) {
+  final PerformScanUpload performScanUpload;
+  final ImagePicker _picker;
+
+  ScanKulitBloc({
+    required this.performScanUpload,
+    ImagePicker? picker,
+  })  : _picker = picker ?? ImagePicker(),
+        super(const ScanKulitState()) {
     on<InitializeCameraEvent>(_onInitializeCamera);
     on<ToggleFlashEvent>(_onToggleFlash);
     on<CaptureImageEvent>(_onCaptureImage);
@@ -29,24 +40,52 @@ class ScanKulitBloc extends Bloc<ScanKulitEvent, ScanKulitState> {
     CaptureImageEvent event,
     Emitter<ScanKulitState> emit,
   ) async {
-    emit(state.copyWith(status: ScanStatus.capturing));
-    await Future.delayed(const Duration(milliseconds: 800));
-    emit(state.copyWith(
-      status: ScanStatus.success,
-      imagePath: 'simulated_captured_skin.jpg',
-    ));
+    try {
+      final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+      if (photo == null) return;
+
+      emit(state.copyWith(status: ScanStatus.capturing));
+
+      final file = File(photo.path);
+      final result = await performScanUpload(file);
+
+      emit(state.copyWith(
+        status: ScanStatus.success,
+        imagePath: photo.path,
+        scanResult: result,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: ScanStatus.failure,
+        errorMessage: e.toString().replaceAll('Exception: ', ''),
+      ));
+    }
   }
 
   Future<void> _onPickFromGallery(
     PickFromGalleryEvent event,
     Emitter<ScanKulitState> emit,
   ) async {
-    emit(state.copyWith(status: ScanStatus.capturing));
-    await Future.delayed(const Duration(milliseconds: 500));
-    emit(state.copyWith(
-      status: ScanStatus.success,
-      imagePath: 'simulated_gallery_skin.jpg',
-    ));
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+
+      emit(state.copyWith(status: ScanStatus.capturing));
+
+      final file = File(image.path);
+      final result = await performScanUpload(file);
+
+      emit(state.copyWith(
+        status: ScanStatus.success,
+        imagePath: image.path,
+        scanResult: result,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: ScanStatus.failure,
+        errorMessage: e.toString().replaceAll('Exception: ', ''),
+      ));
+    }
   }
 
   void _onResetScan(

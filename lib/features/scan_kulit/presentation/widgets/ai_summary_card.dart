@@ -4,7 +4,16 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 /// Kartu Ringkasan AI, Saran Awal & Disclaimer
 class AiSummaryCard extends StatelessWidget {
-  const AiSummaryCard({super.key});
+  final String? summaryText;
+  final String? disclaimer;
+  final String? notice;
+
+  const AiSummaryCard({
+    super.key,
+    this.summaryText,
+    this.disclaimer,
+    this.notice,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +34,33 @@ class AiSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (notice != null && notice!.isNotEmpty) ...[
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFFAEB),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFFEDF89)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(LucideIcons.alertTriangle, size: 18, color: Color(0xFFB54708)),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      notice!,
+                      style: GoogleFonts.roboto(
+                        fontSize: 12,
+                        color: const Color(0xFFB54708),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+
           // Section 1: Ringkasan AI
           Text(
             'Ringkasan AI',
@@ -36,7 +72,7 @@ class AiSummaryCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Terdeteksi adanya jerawat ringan hingga sedang dengan beberapa komedo dan peradangan kecil.',
+            summaryText ?? 'Terdeteksi indikasi masalah kulit berdasarkan analisis komprehensif model AI.',
             style: GoogleFonts.roboto(
               fontSize: 13,
               height: 1.45,
@@ -56,11 +92,11 @@ class AiSummaryCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          const _CheckItem(text: 'Bersihkan wajah 2x sehari'),
+          const _CheckItem(text: 'Bersihkan area kulit 2x sehari dengan pembersih lembut'),
           const SizedBox(height: 8),
-          const _CheckItem(text: 'Gunakan skincare non-komedogenik'),
+          const _CheckItem(text: 'Gunakan pelembap dan sunscreen non-komedogenik'),
           const SizedBox(height: 8),
-          const _CheckItem(text: 'Hindari memencet jerawat'),
+          const _CheckItem(text: 'Hindari memencet atau menggaruk area kulit yang bermasalah'),
           const SizedBox(height: 18),
 
           // Section 3: Disclaimer Box
@@ -71,7 +107,8 @@ class AiSummaryCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
             ),
             child: Text(
-              'Hasil ini dibuat oleh AI dan bukan diagnosis dokter. Untuk hasil yang lebih akurat, konsultasikan ke dokter.',
+              disclaimer ??
+                  'Hasil scan ini hanya sebagai referensi awal dan bukan diagnosis medis resmi. Konsultasikan ke dokter untuk penanganan medis tepat.',
               style: GoogleFonts.roboto(
                 fontSize: 11,
                 height: 1.45,

@@ -11,6 +11,8 @@ import '../../features/profile/domain/entities/user_profile.dart';
 import '../../features/profile/presentation/pages/account_settings_page.dart';
 import '../../features/profile/presentation/pages/edit_profile_page.dart';
 
+import '../../features/scan_kulit/domain/entities/scan_result.dart';
+
 class AppRouter {
   static const String login = '/login';
   static const String register = '/register';
@@ -42,7 +44,10 @@ class AppRouter {
       ),
       GoRoute(
         path: hasilScan,
-        builder: (context, state) => const HasilScanPage(),
+        builder: (context, state) {
+          final scanResult = state.extra as ScanResult?;
+          return HasilScanPage(scanResult: scanResult);
+        },
       ),
       GoRoute(
         path: konfirmasiDokter,

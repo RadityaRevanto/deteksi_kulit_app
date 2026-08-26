@@ -96,7 +96,7 @@ class MainPage extends StatelessWidget {
                         isSelected: state.currentIndex == 3,
                         onTap: () {
                           context.read<NavigationBloc>().add(
-                            NavigationTabChanged(2),
+                            NavigationTabChanged(3),
                           );
                         },
                       ),

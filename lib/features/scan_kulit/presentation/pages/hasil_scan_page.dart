@@ -8,8 +8,12 @@ import '../widgets/condition_card.dart';
 import '../widgets/other_probabilities_card.dart';
 import '../widgets/ai_summary_card.dart';
 
+import '../../domain/entities/scan_result.dart';
+
 class HasilScanPage extends StatelessWidget {
-  const HasilScanPage({super.key});
+  final ScanResult? scanResult;
+
+  const HasilScanPage({super.key, this.scanResult});
 
   static const Color primaryGreen = Color(0xFF00BF83);
   static const Color darkGreen = Color(0xFF008D68);
@@ -18,12 +22,23 @@ class HasilScanPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final otherIssues = <SkinIssueProbability>[];
+    if (scanResult?.probabilities != null) {
+      scanResult!.probabilities.forEach((key, val) {
+        if (key.toLowerCase() != scanResult!.predictedClass.toLowerCase()) {
+          otherIssues.add(SkinIssueProbability(
+            title: key[0].toUpperCase() + key.substring(1),
+            percentage: val,
+          ));
+        }
+      });
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            // 1. App Bar / Header Navigation
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
@@ -54,7 +69,6 @@ class HasilScanPage extends StatelessWidget {
                 ],
               ),
             ),
-            // 2. Scrollable Body Content
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
@@ -64,14 +78,28 @@ class HasilScanPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Card 1: Kemungkinan Kondisi & Keyakinan
-                    const ConditionCard(),
+                    ConditionCard(
+                      predictedClass: scanResult?.predictedClass ?? 'Acne / Jerawat',
+                      confidence: scanResult?.confidence ?? 0.87,
+                      severityScore: scanResult?.severityScore ?? 42,
+                      severityLevel: scanResult?.severityLevel ?? 'medium',
+                    ),
                     const SizedBox(height: 16),
-                    // Card 2: Probabilitas Masalah Kulit Lain
-                    const OtherProbabilitiesCard(),
+                    OtherProbabilitiesCard(
+                      issues: otherIssues.isNotEmpty
+                          ? otherIssues
+                          : const [
+                              SkinIssueProbability(title: 'Dark Spot', percentage: 0.05),
+                              SkinIssueProbability(title: 'Pigmentasi', percentage: 0.03),
+                              SkinIssueProbability(title: 'Blackhead / Komedo', percentage: 0.02),
+                            ],
+                    ),
                     const SizedBox(height: 16),
-                    // Card 3: Ringkasan AI & Saran Awal
-                    const AiSummaryCard(),
+                   
+                    AiSummaryCard(
+                      disclaimer: scanResult?.disclaimer,
+                      notice: scanResult?.notice,
+                    ),
                     const SizedBox(height: 20),
                   ],
                 ),

@@ -5,6 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../app/routes/app_router.dart';
+import '../../../../core/network/api_client.dart';
+import '../../../../core/widgets/app_status_dialog.dart';
+import '../../../auth/data/datasources/auth_local_data_source.dart';
+import '../../data/datasources/scan_remote_data_source.dart';
+import '../../data/repositories/scan_repository_impl.dart';
+import '../../domain/usecases/perform_scan_upload.dart';
 import '../bloc/scan_kulit_bloc.dart';
 import '../bloc/scan_kulit_event.dart';
 import '../bloc/scan_kulit_state.dart';
@@ -80,22 +86,33 @@ class ScanKulitPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ScanKulitBloc()..add(const InitializeCameraEvent()),
+      create: (context) {
+        final apiClient = context.read<ApiClient>();
+        final authLocalDataSource = context.read<AuthLocalDataSource>();
+        final scanRemoteDataSource = ScanRemoteDataSourceImpl(
+          apiClient: apiClient,
+          tokenGetter: () => authLocalDataSource.getToken(),
+        );
+        final scanRepository = ScanRepositoryImpl(remoteDataSource: scanRemoteDataSource);
+        final performScanUpload = PerformScanUpload(scanRepository);
+
+        return ScanKulitBloc(performScanUpload: performScanUpload)
+          ..add(const InitializeCameraEvent());
+      },
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
           child: BlocConsumer<ScanKulitBloc, ScanKulitState>(
             listener: (context, state) {
               if (state.status == ScanStatus.success) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Foto berhasil diambil! Memulai analisis AI...',
-                    ),
-                    backgroundColor: primaryGreen,
-                  ),
+                context.push(AppRouter.hasilScan, extra: state.scanResult);
+              } else if (state.status == ScanStatus.failure) {
+                AppStatusDialog.show(
+                  context: context,
+                  title: 'Gagal Memproses Scan',
+                  message: state.errorMessage ?? 'Terjadi kesalahan saat memproses foto',
+                  type: AppStatusDialogType.error,
                 );
-                context.push(AppRouter.hasilScan);
               }
             },
 
