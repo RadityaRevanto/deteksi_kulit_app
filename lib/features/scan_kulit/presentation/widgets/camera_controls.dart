@@ -25,7 +25,30 @@ class CameraControls extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-      
+        // 1. Gallery Button
+        InkWell(
+          onTap: isCapturing ? null : onGalleryTap,
+          borderRadius: BorderRadius.circular(28),
+          child: Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color(0xFFE6F8F2),
+              border: Border.all(
+                color: primaryGreen.withValues(alpha: 0.3),
+                width: 1.5,
+              ),
+            ),
+            child: const Icon(
+              Icons.photo_library_rounded,
+              color: darkGreen,
+              size: 24,
+            ),
+          ),
+        ),
+
+        // 2. Camera Shutter Capture Button
         GestureDetector(
           onTap: isCapturing ? null : onCaptureTap,
           child: Container(
@@ -59,6 +82,29 @@ class CameraControls extends StatelessWidget {
                       )
                     : null,
               ),
+            ),
+          ),
+        ),
+
+        // 3. Flash Toggle Button
+        InkWell(
+          onTap: isCapturing ? null : onFlashTap,
+          borderRadius: BorderRadius.circular(28),
+          child: Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isFlashOn ? const Color(0xFFFEF08A) : const Color(0xFFF1F5F9),
+              border: Border.all(
+                color: isFlashOn ? const Color(0xFFEAB308) : const Color(0xFFCBD5E1),
+                width: 1.5,
+              ),
+            ),
+            child: Icon(
+              isFlashOn ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+              color: isFlashOn ? const Color(0xFF854D0E) : const Color(0xFF64748B),
+              size: 24,
             ),
           ),
         ),

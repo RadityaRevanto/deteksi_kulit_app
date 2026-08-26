@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -78,6 +79,7 @@ class HasilScanPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _ScannedImageCard(imageUrl: scanResult?.imageUrl),
                     ConditionCard(
                       predictedClass: scanResult?.predictedClass ?? 'Acne / Jerawat',
                       confidence: scanResult?.confidence ?? 0.87,
@@ -153,6 +155,113 @@ class HasilScanPage extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ScannedImageCard extends StatelessWidget {
+  final String? imageUrl;
+
+  const _ScannedImageCard({this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    if (imageUrl == null || imageUrl!.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    Widget imageWidget;
+    final file = File(imageUrl!);
+
+    if (file.existsSync()) {
+      imageWidget = Image.file(
+        file,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: 210,
+      );
+    } else if (imageUrl!.startsWith('http')) {
+      String finalUrl = imageUrl!;
+      if (finalUrl.contains('localhost:8000')) {
+        finalUrl = finalUrl.replaceAll('localhost:8000', '127.0.0.1:8000');
+      }
+
+      imageWidget = Image.network(
+        finalUrl,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: 210,
+        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+      );
+    } else {
+      imageWidget = _buildPlaceholder();
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFEAECF0)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0A000000),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          imageWidget,
+          Positioned(
+            top: 12,
+            right: 12,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.65),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    LucideIcons.camera,
+                    size: 13,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    'Foto Muka / Kulit Di-scan',
+                    style: GoogleFonts.roboto(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      height: 160,
+      width: double.infinity,
+      color: const Color(0xFFF2F4F7),
+      child: const Center(
+        child: Icon(
+          Icons.image_not_supported_outlined,
+          color: Color(0xFF98A2B3),
+          size: 36,
         ),
       ),
     );

@@ -181,7 +181,7 @@ class ScanKulitPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Ambil foto area kulit yang ingin dianalisis dengan pencahayaan yang baik.',
+                      'Pilih/Ambil foto wajah yang memperlihatkan area mata, hidung & mulut dengan jelas dan pencahayaan yang cukup agar AI dapat menganalisis.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.roboto(
                         fontSize: 13,
@@ -214,7 +214,7 @@ class ScanKulitPage extends StatelessWidget {
                         );
                       },
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 14),
                     const PrivacyBanner(),
                     const SizedBox(height: 8),
                   ],

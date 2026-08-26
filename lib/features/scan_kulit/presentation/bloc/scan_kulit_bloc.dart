@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../domain/entities/scan_result.dart';
 import '../../domain/usecases/perform_scan_upload.dart';
 import 'scan_kulit_event.dart';
 import 'scan_kulit_state.dart';
@@ -49,10 +50,27 @@ class ScanKulitBloc extends Bloc<ScanKulitEvent, ScanKulitState> {
       final file = File(photo.path);
       final result = await performScanUpload(file);
 
+      final finalResult = (result.imageUrl == null || result.imageUrl!.isEmpty)
+          ? ScanResult(
+              uuid: result.uuid,
+              scanMode: result.scanMode,
+              predictedClass: result.predictedClass,
+              confidence: result.confidence,
+              probabilities: result.probabilities,
+              severityScore: result.severityScore,
+              severityLevel: result.severityLevel,
+              modelUsed: result.modelUsed,
+              imageUrl: photo.path,
+              disclaimer: result.disclaimer,
+              notice: result.notice,
+              createdAt: result.createdAt,
+            )
+          : result;
+
       emit(state.copyWith(
         status: ScanStatus.success,
         imagePath: photo.path,
-        scanResult: result,
+        scanResult: finalResult,
       ));
     } catch (e) {
       emit(state.copyWith(
@@ -75,10 +93,27 @@ class ScanKulitBloc extends Bloc<ScanKulitEvent, ScanKulitState> {
       final file = File(image.path);
       final result = await performScanUpload(file);
 
+      final finalResult = (result.imageUrl == null || result.imageUrl!.isEmpty)
+          ? ScanResult(
+              uuid: result.uuid,
+              scanMode: result.scanMode,
+              predictedClass: result.predictedClass,
+              confidence: result.confidence,
+              probabilities: result.probabilities,
+              severityScore: result.severityScore,
+              severityLevel: result.severityLevel,
+              modelUsed: result.modelUsed,
+              imageUrl: image.path,
+              disclaimer: result.disclaimer,
+              notice: result.notice,
+              createdAt: result.createdAt,
+            )
+          : result;
+
       emit(state.copyWith(
         status: ScanStatus.success,
         imagePath: image.path,
-        scanResult: result,
+        scanResult: finalResult,
       ));
     } catch (e) {
       emit(state.copyWith(
