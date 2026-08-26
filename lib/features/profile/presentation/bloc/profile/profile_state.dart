@@ -29,3 +29,15 @@ class ProfileDataExportSuccess extends ProfileState {
     required this.expiresInMinutes,
   });
 }
+
+class EmailOtpSentSuccess extends ProfileState {
+  final String message;
+
+  EmailOtpSentSuccess(this.message);
+}
+
+class EmailVerificationSuccess extends ProfileState {
+  final String message;
+
+  EmailVerificationSuccess(this.message);
+}

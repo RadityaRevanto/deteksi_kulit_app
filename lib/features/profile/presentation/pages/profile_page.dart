@@ -20,6 +20,9 @@ import '../widgets/profile_header.dart';
 import '../widgets/profile_menu.dart';
 import '../widgets/profile_stats_card.dart';
 
+import '../../domain/usecases/send_email_verification_otp.dart';
+import '../../domain/usecases/verify_email_otp.dart';
+
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
@@ -91,9 +94,13 @@ class ProfilePage extends StatelessWidget {
         final repository = ProfileRepositoryImpl(remoteDataSource: dataSource);
         final getProfileUseCase = GetProfile(repository);
         final updateProfileUseCase = UpdateProfile(repository);
+        final sendEmailOtpUseCase = SendEmailVerificationOtp(repository);
+        final verifyEmailOtpUseCase = VerifyEmailOtp(repository);
         return ProfileBloc(
           getProfile: getProfileUseCase,
           updateProfile: updateProfileUseCase,
+          sendEmailVerificationOtp: sendEmailOtpUseCase,
+          verifyEmailOtp: verifyEmailOtpUseCase,
         )..add(ProfileRequested());
       },
       child: Scaffold(
@@ -156,6 +163,13 @@ class ProfilePage extends StatelessWidget {
                 message: state.message,
                 type: AppStatusDialogType.error,
               );
+            } else if (state is EmailOtpSentSuccess) {
+              AppStatusDialog.show(
+                context: context,
+                title: 'OTP Terkirim',
+                message: state.message,
+                type: AppStatusDialogType.success,
+              );
             }
           },
           builder: (context, state) {
@@ -206,6 +220,15 @@ class ProfilePage extends StatelessWidget {
                   children: [
                     ProfileHeader(
                       profile: state.profile,
+                      onVerifyEmailPressed: () async {
+                        final verified = await context.push<bool>(
+                          AppRouter.verifyEmailOtp,
+                          extra: state.profile.email,
+                        );
+                        if (verified == true && context.mounted) {
+                          context.read<ProfileBloc>().add(ProfileRequested());
+                        }
+                      },
                       onEditPressed: () async {
                         final updated = await context.push<bool>(
                           AppRouter.editProfile,
@@ -216,6 +239,82 @@ class ProfilePage extends StatelessWidget {
                         }
                       },
                     ),
+                    if (!state.profile.emailVerified) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFFAEB),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFFEDF89)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.warning_amber_rounded,
+                              size: 22,
+                              color: Color(0xFFB54708),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Verifikasi Email Diperlukan',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xFFB54708),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Verifikasi email Anda terlebih dahulu untuk menggunakan fitur Scan Kulit & Chat Dokter.',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 11,
+                                      color: const Color(0xFFB54708),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: () async {
+                                final verified = await context.push<bool>(
+                                  AppRouter.verifyEmailOtp,
+                                  extra: state.profile.email,
+                                );
+                                if (verified == true && context.mounted) {
+                                  context.read<ProfileBloc>().add(ProfileRequested());
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFB54708),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text(
+                                'Kirim OTP',
+                                style: GoogleFonts.roboto(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 12),
                     ProfileStatsCard(profile: state.profile),
                     const SizedBox(height: 12),

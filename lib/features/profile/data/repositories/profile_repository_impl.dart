@@ -31,4 +31,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<Map<String, dynamic>> exportData() async {
     return await remoteDataSource.exportData();
   }
+
+  @override
+  Future<void> sendEmailVerificationOtp() async {
+    await remoteDataSource.sendEmailVerificationOtp();
+  }
+
+  @override
+  Future<void> verifyEmailOtp(String otp) async {
+    await remoteDataSource.verifyEmailOtp(otp);
+  }
 }

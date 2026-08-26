@@ -6,4 +6,6 @@ abstract class ProfileRepository {
   Future<UserProfile> deleteAvatar();
   Future<void> deleteAccount();
   Future<Map<String, dynamic>> exportData();
+  Future<void> sendEmailVerificationOtp();
+  Future<void> verifyEmailOtp(String otp);
 }

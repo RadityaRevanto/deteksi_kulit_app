@@ -8,6 +8,8 @@ abstract class ProfileRemoteDataSource {
   Future<ProfileModel> deleteAvatar();
   Future<void> deleteAccount();
   Future<Map<String, dynamic>> exportData();
+  Future<void> sendEmailVerificationOtp();
+  Future<void> verifyEmailOtp(String otp);
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -59,5 +61,15 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       return response['data'] as Map<String, dynamic>;
     }
     return response;
+  }
+
+  @override
+  Future<void> sendEmailVerificationOtp() async {
+    await apiClient.post('/email/verify/send');
+  }
+
+  @override
+  Future<void> verifyEmailOtp(String otp) async {
+    await apiClient.post('/email/verify', body: {'otp': otp});
   }
 }

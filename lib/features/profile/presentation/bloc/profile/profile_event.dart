@@ -19,3 +19,11 @@ class ProfileAvatarDeleted extends ProfileEvent {}
 class ProfileAccountDeleted extends ProfileEvent {}
 
 class ProfileDataExportRequested extends ProfileEvent {}
+
+class SendEmailOtpEvent extends ProfileEvent {}
+
+class VerifyEmailOtpEvent extends ProfileEvent {
+  final String otp;
+
+  VerifyEmailOtpEvent(this.otp);
+}

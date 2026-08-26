@@ -5,11 +5,13 @@ import '../../domain/entities/user_profile.dart';
 class ProfileHeader extends StatelessWidget {
   final UserProfile profile;
   final VoidCallback onEditPressed;
+  final VoidCallback? onVerifyEmailPressed;
 
   const ProfileHeader({
     super.key,
     required this.profile,
     required this.onEditPressed,
+    this.onVerifyEmailPressed,
   });
 
   static const Color primaryGreen = Color(0xFF00BF83);
@@ -73,6 +75,51 @@ class ProfileHeader extends StatelessWidget {
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                GestureDetector(
+                  onTap: profile.emailVerified ? null : onVerifyEmailPressed,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: profile.emailVerified
+                          ? const Color(0xFFE6F8F2)
+                          : const Color(0xFFFFFAEB),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: profile.emailVerified
+                            ? const Color(0xFF00BF83)
+                            : const Color(0xFFFEDF89),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          profile.emailVerified
+                              ? Icons.check_circle_rounded
+                              : Icons.warning_amber_rounded,
+                          size: 12,
+                          color: profile.emailVerified
+                              ? const Color(0xFF008D68)
+                              : const Color(0xFFB54708),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          profile.emailVerified
+                              ? 'Terverifikasi'
+                              : 'Belum Terverifikasi',
+                          style: GoogleFonts.roboto(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: profile.emailVerified
+                                ? const Color(0xFF008D68)
+                                : const Color(0xFFB54708),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),

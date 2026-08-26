@@ -10,6 +10,7 @@ import '../../features/dokter/presentation/pages/konfirmasi_dokter_page.dart';
 import '../../features/profile/domain/entities/user_profile.dart';
 import '../../features/profile/presentation/pages/account_settings_page.dart';
 import '../../features/profile/presentation/pages/edit_profile_page.dart';
+import '../../features/profile/presentation/pages/verify_email_otp_page.dart';
 
 import '../../features/scan_kulit/domain/entities/scan_result.dart';
 
@@ -22,6 +23,7 @@ class AppRouter {
   static const String konfirmasiDokter = '/konfirmasi-dokter';
   static const String editProfile = '/edit-profile';
   static const String accountSettings = '/account-settings';
+  static const String verifyEmailOtp = '/verify-email-otp';
 
   static final GoRouter router = GoRouter(
     initialLocation: login,
@@ -65,6 +67,13 @@ class AppRouter {
         builder: (context, state) {
           final profile = state.extra as UserProfile?;
           return AccountSettingsPage(profile: profile);
+        },
+      ),
+      GoRoute(
+        path: verifyEmailOtp,
+        builder: (context, state) {
+          final email = state.extra as String?;
+          return VerifyEmailOtpPage(email: email);
         },
       ),
     ],

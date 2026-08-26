@@ -9,6 +9,7 @@ import '../bloc/navigation/navigation_state.dart';
 
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/history/presentation/pages/history_page.dart';
+import '../../features/dokter/presentation/pages/konfirmasi_dokter_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 
 class MainPage extends StatelessWidget {
@@ -19,7 +20,12 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pages = const [HomePage(), HistoryPage(), ProfilePage()];
+    final pages = const [
+      HomePage(),
+      HistoryPage(),
+      KonfirmasiDokterPage(),
+      ProfilePage(),
+    ];
 
     return BlocBuilder<NavigationBloc, NavigationState>(
       builder: (context, state) {
