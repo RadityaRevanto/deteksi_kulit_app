@@ -38,6 +38,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
   late TextEditingController _dobController;
+  String _selectedGender = 'laki_laki';
 
   File? _avatarFile;
   final ImagePicker _picker = ImagePicker();
@@ -57,7 +58,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _lastNameController = TextEditingController(text: lastName);
     _emailController = TextEditingController(text: profile?.email ?? '');
     _phoneController = TextEditingController(text: '+62 82328277993');
-    _dobController = TextEditingController(text: profile?.dateOfBirth ?? '27/07/2006');
+    _dobController = TextEditingController(
+      text: _formatDobForDisplay(profile?.dateOfBirth),
+    );
+    final g = profile?.gender?.toLowerCase() ?? '';
+    if (g == 'perempuan' || g == 'female' || g == 'p') {
+      _selectedGender = 'perempuan';
+    } else {
+      _selectedGender = 'laki_laki';
+    }
   }
 
   @override
@@ -103,10 +112,36 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  String _formatDobForDisplay(String? rawDob) {
+    if (rawDob == null || rawDob.trim().isEmpty) return '';
+    try {
+      if (rawDob.contains('-')) {
+        final parsed = DateTime.parse(rawDob.trim());
+        return DateFormat('dd/MM/yyyy').format(parsed);
+      }
+    } catch (_) {}
+    return rawDob;
+  }
+
   void _onSavePressed(BuildContext blocContext) {
     if (_formKey.currentState?.validate() ?? false) {
       final fullName = '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}'.trim();
       
+      String? formattedDob;
+      if (_dobController.text.trim().isNotEmpty) {
+        try {
+          if (_dobController.text.contains('/')) {
+            final parsed = DateFormat('dd/MM/yyyy').parse(_dobController.text.trim());
+            formattedDob = DateFormat('yyyy-MM-dd').format(parsed);
+          } else {
+            final parsed = DateTime.parse(_dobController.text.trim());
+            formattedDob = DateFormat('yyyy-MM-dd').format(parsed);
+          }
+        } catch (_) {
+          formattedDob = _dobController.text.trim();
+        }
+      }
+
       setState(() {
         _isSubmitting = true;
       });
@@ -114,7 +149,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       blocContext.read<ProfileBloc>().add(
             ProfileUpdated(
               name: fullName,
-              dateOfBirth: _dobController.text,
+              gender: _selectedGender,
+              dateOfBirth: formattedDob,
             ),
           );
     }
@@ -182,7 +218,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   _emailController.text = state.profile.email;
                 }
                 if (state.profile.dateOfBirth != null && state.profile.dateOfBirth!.isNotEmpty) {
-                  _dobController.text = state.profile.dateOfBirth!;
+                  _dobController.text = _formatDobForDisplay(state.profile.dateOfBirth);
                 }
               }
             } else if (state is ProfileFailure) {
@@ -306,6 +342,106 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 Icons.calendar_month_outlined,
                                 color: Color(0xFF667085),
                               ),
+                            ),
+                            const SizedBox(height: 18),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Jenis Kelamin',
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFF344054),
+                                      ),
+                                    ),
+                                    Text(
+                                      ' *',
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () => setState(() => _selectedGender = 'laki_laki'),
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(vertical: 12),
+                                          decoration: BoxDecoration(
+                                            color: _selectedGender == 'laki_laki' ? const Color(0xFFE6F8F2) : Colors.white,
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: Border.all(
+                                              color: _selectedGender == 'laki_laki' ? const Color(0xFF00BF83) : const Color(0xFFD0D5DD),
+                                              width: _selectedGender == 'laki_laki' ? 2 : 1,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.male_rounded,
+                                                color: _selectedGender == 'laki_laki' ? const Color(0xFF00BF83) : const Color(0xFF667085),
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                'Laki-laki',
+                                                style: GoogleFonts.roboto(
+                                                  fontWeight: _selectedGender == 'laki_laki' ? FontWeight.bold : FontWeight.normal,
+                                                  color: _selectedGender == 'laki_laki' ? const Color(0xFF00BF83) : const Color(0xFF344054),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () => setState(() => _selectedGender = 'perempuan'),
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(vertical: 12),
+                                          decoration: BoxDecoration(
+                                            color: _selectedGender == 'perempuan' ? const Color(0xFFE6F8F2) : Colors.white,
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: Border.all(
+                                              color: _selectedGender == 'perempuan' ? const Color(0xFF00BF83) : const Color(0xFFD0D5DD),
+                                              width: _selectedGender == 'perempuan' ? 2 : 1,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.female_rounded,
+                                                color: _selectedGender == 'perempuan' ? const Color(0xFF00BF83) : const Color(0xFF667085),
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                'Perempuan',
+                                                style: GoogleFonts.roboto(
+                                                  fontWeight: _selectedGender == 'perempuan' ? FontWeight.bold : FontWeight.normal,
+                                                  color: _selectedGender == 'perempuan' ? const Color(0xFF00BF83) : const Color(0xFF344054),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 24),
                           ],

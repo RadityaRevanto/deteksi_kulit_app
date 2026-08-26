@@ -17,6 +17,11 @@ abstract class ApiClient {
     Map<String, String>? headers,
     Map<String, dynamic>? body,
   });
+  Future<Map<String, dynamic>> patch(
+    String path, {
+    Map<String, String>? headers,
+    Map<String, dynamic>? body,
+  });
   Future<Map<String, dynamic>> delete(
     String path, {
     Map<String, String>? headers,
@@ -99,6 +104,33 @@ class ApiClientImpl implements ApiClient {
 
     try {
       final response = await client.post(
+        uri,
+        headers: requestHeaders,
+        body: requestBody,
+      );
+      return _processResponse(response);
+    } on SocketException {
+      throw const NetworkException(
+        'Gagal terhubung ke server backend. Pastikan server aktif.',
+      );
+    } catch (e) {
+      if (e is ServerException || e is NetworkException) rethrow;
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> patch(
+    String path, {
+    Map<String, String>? headers,
+    Map<String, dynamic>? body,
+  }) async {
+    final uri = _buildUri(path);
+    final requestHeaders = await _buildHeaders(headers);
+    final requestBody = body != null ? jsonEncode(body) : null;
+
+    try {
+      final response = await client.patch(
         uri,
         headers: requestHeaders,
         body: requestBody,

@@ -36,7 +36,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       body['date_of_birth'] = dateOfBirth;
     }
 
-    final response = await apiClient.post(
+    final response = await apiClient.patch(
       ApiConstants.profileEndpoint,
       body: body,
     );

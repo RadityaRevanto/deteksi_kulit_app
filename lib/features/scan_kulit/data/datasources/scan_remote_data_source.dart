@@ -43,7 +43,9 @@ class ScanRemoteDataSourceImpl implements ScanRemoteDataSource {
     request.files.add(multipartFile);
 
     try {
-      final streamedResponse = await request.send();
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 90), onTimeout: () {
+        throw const NetworkException('Waktu koneksi habis (timeout). Server ML backend sedang sibuk.');
+      });
       final response = await http.Response.fromStream(streamedResponse);
 
       dynamic decoded;
@@ -65,7 +67,9 @@ class ScanRemoteDataSourceImpl implements ScanRemoteDataSource {
 
       throw ServerException(errorMessage);
     } on SocketException {
-      throw const NetworkException('Gagal terhubung ke server backend. Pastikan server aktif.');
+      throw const NetworkException('Gagal terhubung ke server backend. Pastikan server aktif & port forwarding ADB aktif.');
+    } on http.ClientException catch (e) {
+      throw NetworkException('Koneksi jaringan terputus: ${e.message}');
     } catch (e) {
       if (e is ServerException || e is NetworkException) rethrow;
       throw ServerException(e.toString());
