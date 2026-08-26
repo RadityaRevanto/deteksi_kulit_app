@@ -1,17 +1,67 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+
 import '../../domain/entities/history.dart';
 
 class HistoryCard extends StatelessWidget {
   final History history;
   final VoidCallback? onTap;
 
-  const HistoryCard({
-    super.key,
-    required this.history,
-    this.onTap,
-  });
+  const HistoryCard({super.key, required this.history, this.onTap});
+
+  Widget _buildScanAvatar() {
+    final url = history.imageUrl;
+    if (url != null && url.isNotEmpty) {
+      if (url.startsWith('http')) {
+        String finalUrl = url;
+        if (finalUrl.contains('localhost:8000')) {
+          finalUrl = finalUrl.replaceAll('localhost:8000', '127.0.0.1:8000');
+        }
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(22),
+          child: Image.network(
+            finalUrl,
+            width: 44,
+            height: 44,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => _buildFallbackIcon(),
+          ),
+        );
+      } else {
+        final file = File(url);
+        if (file.existsSync()) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: Image.file(
+              file,
+              width: 44,
+              height: 44,
+              fit: BoxFit.cover,
+            ),
+          );
+        }
+      }
+    }
+    return _buildFallbackIcon();
+  }
+
+  Widget _buildFallbackIcon() {
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: const BoxDecoration(
+        color: Color(0xFFE6F8F2),
+        shape: BoxShape.circle,
+      ),
+      child: const Icon(
+        LucideIcons.scanLine,
+        color: Color(0xFF008D68),
+        size: 22,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,20 +93,8 @@ class HistoryCard extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                // Scan Icon Avatar
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFE6F8F2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    LucideIcons.scanLine,
-                    color: Color(0xFF008D68),
-                    size: 22,
-                  ),
-                ),
+                // Scan User Photo Avatar
+                _buildScanAvatar(),
                 const SizedBox(width: 14),
 
                 // Condition Title & Info

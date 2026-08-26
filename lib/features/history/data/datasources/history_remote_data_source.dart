@@ -1,3 +1,4 @@
+import '../../../../core/network/api_client.dart';
 import '../models/history_model.dart';
 
 abstract class HistoryRemoteDataSource {
@@ -5,30 +6,23 @@ abstract class HistoryRemoteDataSource {
 }
 
 class HistoryRemoteDataSourceImpl implements HistoryRemoteDataSource {
+  final ApiClient apiClient;
+
+  HistoryRemoteDataSourceImpl({ApiClient? apiClient})
+      : apiClient = apiClient ?? ApiClientImpl();
+
   @override
   Future<List<HistoryModel>> getHistories() async {
-    // Simulasi delay jaringan dan data mock
-    await Future.delayed(const Duration(milliseconds: 800));
+    final response = await apiClient.get('/scans?sort=-created_at');
+    final list = <HistoryModel>[];
 
-    return [
-      HistoryModel(
-        id: '1',
-        conditionName: 'Eksim (Eczema)',
-        confidence: 0.94,
-        date: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      HistoryModel(
-        id: '2',
-        conditionName: 'Jerawat (Acne Vulgaris)',
-        confidence: 0.88,
-        date: DateTime.now().subtract(const Duration(days: 3)),
-      ),
-      HistoryModel(
-        id: '3',
-        conditionName: 'Psoriasis',
-        confidence: 0.79,
-        date: DateTime.now().subtract(const Duration(days: 7)),
-      ),
-    ];
+    if (response.containsKey('data') && response['data'] is List) {
+      for (final item in response['data'] as List) {
+        if (item is Map<String, dynamic>) {
+          list.add(HistoryModel.fromJson(item));
+        }
+      }
+    }
+    return list;
   }
 }

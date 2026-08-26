@@ -50,3 +50,4 @@ app.*.map.json
 # Custom ignored files
 flutter_bloc_clean_architecture_structure.md
 API_DOCUMENTATION.md
+ACTIVITY_DIAGRAMS.md

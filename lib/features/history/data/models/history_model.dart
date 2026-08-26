@@ -1,3 +1,4 @@
+import '../../../scan_kulit/data/models/scan_result_model.dart';
 import '../../domain/entities/history.dart';
 
 class HistoryModel extends History {
@@ -7,15 +8,25 @@ class HistoryModel extends History {
     required super.confidence,
     required super.date,
     super.imageUrl,
+    super.scanResult,
   });
 
   factory HistoryModel.fromJson(Map<String, dynamic> json) {
+    final scanResultModel = ScanResultModel.fromJson(json);
+    DateTime parsedDate = DateTime.now();
+    try {
+      if (json['created_at'] != null) {
+        parsedDate = DateTime.parse(json['created_at'].toString());
+      }
+    } catch (_) {}
+
     return HistoryModel(
-      id: json['id'] as String,
-      conditionName: json['conditionName'] as String,
-      confidence: (json['confidence'] as num).toDouble(),
-      date: DateTime.parse(json['date'] as String),
-      imageUrl: json['imageUrl'] as String?,
+      id: scanResultModel.uuid,
+      conditionName: scanResultModel.predictedClass,
+      confidence: scanResultModel.confidence,
+      date: parsedDate,
+      imageUrl: scanResultModel.imageUrl,
+      scanResult: scanResultModel,
     );
   }
 
