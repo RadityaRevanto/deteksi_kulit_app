@@ -15,6 +15,9 @@ import '../../features/profile/presentation/pages/edit_profile_page.dart';
 import '../../features/profile/presentation/pages/verify_email_otp_page.dart';
 
 import '../../features/scan_kulit/domain/entities/scan_result.dart';
+import '../../features/skincare/domain/entities/skincare_product.dart';
+import '../../features/skincare/presentation/pages/skincare_catalog_page.dart';
+import '../../features/skincare/presentation/pages/skincare_detail_page.dart';
 
 class AppRouter {
   static const String login = '/login';
@@ -27,6 +30,8 @@ class AppRouter {
   static const String accountSettings = '/account-settings';
   static const String verifyEmailOtp = '/verify-email-otp';
   static const String chatRoom = '/chat-room';
+  static const String skincareCatalog = '/skincare-catalog';
+  static const String skincareDetail = '/skincare-detail';
 
   static final GoRouter router = GoRouter(
     initialLocation: login,
@@ -77,6 +82,17 @@ class AppRouter {
         builder: (context, state) {
           final email = state.extra as String?;
           return VerifyEmailOtpPage(email: email);
+        },
+      ),
+      GoRoute(
+        path: skincareCatalog,
+        builder: (context, state) => const SkincareCatalogPage(),
+      ),
+      GoRoute(
+        path: skincareDetail,
+        builder: (context, state) {
+          final product = state.extra as SkincareProduct;
+          return SkincareDetailPage(product: product);
         },
       ),
       GoRoute(

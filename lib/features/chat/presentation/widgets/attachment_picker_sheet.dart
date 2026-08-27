@@ -167,7 +167,24 @@ void _showScanHistoryPickerSheet(BuildContext parentContext) {
                         subtitle: Text('Akurasi $confidence% • ${scan.date.day}/${scan.date.month}/${scan.date.year}'),
                         onTap: () {
                           Navigator.pop(ctx);
-                          final msg = '[DOKUMEN_HASIL_SCAN]\n📋 Kondisi: ${scan.conditionName}\n🎯 Akurasi: $confidence%\n📅 Tanggal: ${scan.date.day}/${scan.date.month}/${scan.date.year}\n\nMohon saran dan rekomendasi perawatan untuk kondisi kulit seperti ini ya.';
+                          String otherProbsText = '';
+                          if (scan.scanResult != null && scan.scanResult!.probabilities.isNotEmpty) {
+                            final otherEntries = scan.scanResult!.probabilities.entries
+                                .where((e) => e.key.toLowerCase() != scan.conditionName.toLowerCase())
+                                .take(3)
+                                .map((e) => '${e.key} (${(e.value * 100).toStringAsFixed(0)}%)')
+                                .join(', ');
+                            if (otherEntries.isNotEmpty) {
+                              otherProbsText = '\n📊 Probabilitas Lain: $otherEntries';
+                            }
+                          }
+
+                          String photoText = '';
+                          if (scan.imageUrl != null && scan.imageUrl!.isNotEmpty) {
+                            photoText = '\n🖼️ Foto: ${scan.imageUrl}';
+                          }
+
+                          final msg = '[DOKUMEN_HASIL_SCAN]\n📋 Kondisi: ${scan.conditionName}\n🎯 Akurasi: $confidence%$otherProbsText\n📅 Tanggal: ${scan.date.day}/${scan.date.month}/${scan.date.year}$photoText\n\nMohon saran dan rekomendasi perawatan untuk kondisi kulit seperti ini ya.';
                           parentContext.read<ChatBloc>().add(SendTextMessageEvent(msg));
                         },
                       );

@@ -142,13 +142,30 @@ class HasilScanPage extends StatelessWidget {
                         );
                         final condName = scanResult?.predictedClass ?? 'Acne';
                         final confidence = scanResult != null ? '${(scanResult!.confidence * 100).toStringAsFixed(0)}%' : '87%';
+                        String otherProbsText = '';
+                        if (scanResult != null && scanResult!.probabilities.isNotEmpty) {
+                          final otherEntries = scanResult!.probabilities.entries
+                              .where((e) => e.key.toLowerCase() != condName.toLowerCase())
+                              .take(3)
+                              .map((e) => '${e.key} (${(e.value * 100).toStringAsFixed(0)}%)')
+                              .join(', ');
+                          if (otherEntries.isNotEmpty) {
+                            otherProbsText = '\n📊 Probabilitas Lain: $otherEntries';
+                          }
+                        }
+
+                        String photoText = '';
+                        if (scanResult?.imageUrl != null && scanResult!.imageUrl!.isNotEmpty) {
+                          photoText = '\n🖼️ Foto: ${scanResult!.imageUrl}';
+                        }
                         final now = DateTime.now();
                         final todayDate = '${now.day}/${now.month}/${now.year}';
+
                         context.push(
                           AppRouter.chatRoom,
                           extra: {
                             'doctor': aiDoctor,
-                            'initialMessage': '[DOKUMEN_HASIL_SCAN]\n📋 Kondisi: $condName\n🎯 Akurasi: $confidence\n📅 Tanggal: $todayDate\n\nMohon saran dan rekomendasi perawatan untuk kondisi kulit seperti ini ya Aura Skin.',
+                            'initialMessage': '[DOKUMEN_HASIL_SCAN]\n📋 Kondisi: $condName\n🎯 Akurasi: $confidence$otherProbsText\n📅 Tanggal: $todayDate$photoText\n\nMohon saran dan rekomendasi perawatan untuk kondisi kulit seperti ini ya Aura Skin.',
                           },
                         );
                       },
@@ -164,6 +181,31 @@ class HasilScanPage extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00BF83),
                         elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 46,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        context.push(AppRouter.skincareCatalog);
+                      },
+                      icon: const Icon(LucideIcons.sparkles, size: 18, color: darkGreen),
+                      label: Text(
+                        'Lihat Katalog Skincare Medis',
+                        style: GoogleFonts.roboto(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w700,
+                          color: darkGreen,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xFF00BF83)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
