@@ -7,6 +7,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../app/routes/app_router.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/widgets/loading_widget.dart';
+import '../../../dokter/domain/entities/doctor.dart';
 import '../../data/datasources/history_remote_data_source.dart';
 import '../../data/repositories/history_repository_impl.dart';
 import '../../domain/usecases/get_history.dart';
@@ -385,7 +386,28 @@ class _DoctorChatHistoryTab extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 child: InkWell(
                   onTap: () {
-                    context.push(AppRouter.konfirmasiDokter);
+                    final doctorUuid = doctor['uuid']?.toString() ?? '';
+                    final convUuid = conv['uuid']?.toString() ?? '';
+                    final doctorObj = Doctor(
+                      id: doctorUuid,
+                      name: doctorName,
+                      specialist: specialization,
+                      hospital: isAi ? 'SkinCek AI Center' : 'Klinik SkinCek Utama',
+                      rating: 4.9,
+                      reviewCount: 100,
+                      experienceYears: 8,
+                      consultationFee: isAi ? 0 : 50000,
+                      isOnline: true,
+                      avatarUrl: doctor['avatar']?.toString() ?? '',
+                      isAiBot: isAi,
+                    );
+                    context.push(
+                      AppRouter.chatRoom,
+                      extra: {
+                        'doctor': doctorObj,
+                        'conversationUuid': convUuid,
+                      },
+                    );
                   },
                   borderRadius: BorderRadius.circular(16),
                   child: Padding(

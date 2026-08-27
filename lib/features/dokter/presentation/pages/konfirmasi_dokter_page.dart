@@ -4,12 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../app/routes/app_router.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../data/datasources/doctor_remote_data_source.dart';
 import '../../domain/entities/doctor.dart';
 import '../widgets/doctor_card.dart';
-import '../widgets/scan_summary_banner.dart';
 import '../widgets/schedule_picker_bottom_sheet.dart';
 
 class KonfirmasiDokterPage extends StatefulWidget {
@@ -352,7 +352,7 @@ class _KonfirmasiDokterPageState extends State<KonfirmasiDokterPage> {
                                         return DoctorCard(
                                           doctor: doctor,
                                           onConsultTap: () =>
-                                              _showScheduleBottomSheet(doctor),
+                                              context.push(AppRouter.chatRoom, extra: doctor),
                                         );
                                       },
                                     ),

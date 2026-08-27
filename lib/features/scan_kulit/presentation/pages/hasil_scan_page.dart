@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../app/routes/app_router.dart';
+import '../../../dokter/domain/entities/doctor.dart';
 import '../widgets/condition_card.dart';
 import '../widgets/other_probabilities_card.dart';
 import '../widgets/ai_summary_card.dart';
@@ -43,7 +44,6 @@ class HasilScanPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
-                vertical: 12.0,
               ),
               child: Row(
                 children: [
@@ -124,27 +124,71 @@ class HasilScanPage extends StatelessWidget {
                 children: [
                   SizedBox(
                     width: double.infinity,
-                    height: 48,
+                    height: 46,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        context.push(AppRouter.konfirmasiDokter);
+                        final aiDoctor = Doctor(
+                          id: '',
+                          name: 'Aura Skin AI',
+                          specialist: 'Kecerdasan Buatan',
+                          hospital: 'SkinCek AI',
+                          rating: 5.0,
+                          reviewCount: 100,
+                          experienceYears: 10,
+                          consultationFee: 0,
+                          isOnline: true,
+                          avatarUrl: '',
+                          isAiBot: true,
+                        );
+                        final condName = scanResult?.predictedClass ?? 'Acne';
+                        final confidence = scanResult != null ? '${(scanResult!.confidence * 100).toStringAsFixed(0)}%' : '87%';
+                        final now = DateTime.now();
+                        final todayDate = '${now.day}/${now.month}/${now.year}';
+                        context.push(
+                          AppRouter.chatRoom,
+                          extra: {
+                            'doctor': aiDoctor,
+                            'initialMessage': '[DOKUMEN_HASIL_SCAN]\n📋 Kondisi: $condName\n🎯 Akurasi: $confidence\n📅 Tanggal: $todayDate\n\nMohon saran dan rekomendasi perawatan untuk kondisi kulit seperti ini ya Aura Skin.',
+                          },
+                        );
                       },
-                      icon: const Icon(
-                        LucideIcons.stethoscope,
-                        size: 18,
-                        color: Colors.white,
-                      ),
+                      icon: const Icon(LucideIcons.bot, size: 18, color: Colors.white),
                       label: Text(
-                        'Konfirmasi dengan Dokter',
+                        'Konsultasikan ke Aura Skin AI',
                         style: GoogleFonts.roboto(
-                          fontSize: 14,
+                          fontSize: 13.5,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: darkGreen,
+                        backgroundColor: const Color(0xFF00BF83),
                         elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 46,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        context.push(AppRouter.konfirmasiDokter);
+                      },
+                      icon: const Icon(LucideIcons.stethoscope, size: 18, color: darkGreen),
+                      label: Text(
+                        'Pilih Dokter Spesialis',
+                        style: GoogleFonts.roboto(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w700,
+                          color: darkGreen,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: darkGreen),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),

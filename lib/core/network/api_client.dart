@@ -27,6 +27,12 @@ abstract class ApiClient {
     Map<String, String>? headers,
     Map<String, dynamic>? body,
   });
+  Future<Map<String, dynamic>> postMultipart(
+    String path, {
+    Map<String, String>? headers,
+    Map<String, String>? fields,
+    Map<String, File>? files,
+  });
 }
 
 class ApiClientImpl implements ApiClient {
@@ -140,6 +146,47 @@ class ApiClientImpl implements ApiClient {
       throw const NetworkException(
         'Gagal terhubung ke server backend. Pastikan server aktif.',
       );
+    } catch (e) {
+      if (e is ServerException || e is NetworkException) rethrow;
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> postMultipart(
+    String path, {
+    Map<String, String>? headers,
+    Map<String, String>? fields,
+    Map<String, File>? files,
+  }) async {
+    final uri = _buildUri(path);
+    final requestHeaders = await _buildHeaders(headers);
+    requestHeaders.remove('Content-Type');
+
+    final request = http.MultipartRequest('POST', uri);
+    request.headers.addAll(requestHeaders);
+
+    if (fields != null) {
+      request.fields.addAll(fields);
+    }
+
+    if (files != null) {
+      for (final entry in files.entries) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            entry.key,
+            entry.value.path,
+          ),
+        );
+      }
+    }
+
+    try {
+      final streamedResponse = await client.send(request);
+      final response = await http.Response.fromStream(streamedResponse);
+      return _processResponse(response);
+    } on SocketException {
+      throw const NetworkException('Tidak ada koneksi internet');
     } catch (e) {
       if (e is ServerException || e is NetworkException) rethrow;
       throw ServerException(e.toString());
