@@ -19,6 +19,10 @@ import '../../features/skincare/domain/entities/skincare_product.dart';
 import '../../features/skincare/presentation/pages/skincare_catalog_page.dart';
 import '../../features/skincare/presentation/pages/skincare_detail_page.dart';
 
+import '../../features/subscription/presentation/pages/subscription_plan_page.dart';
+import '../../features/subscription/presentation/pages/payment_webview_page.dart';
+import '../../features/subscription/presentation/pages/subscription_history_page.dart';
+
 class AppRouter {
   static const String login = '/login';
   static const String register = '/register';
@@ -32,6 +36,9 @@ class AppRouter {
   static const String chatRoom = '/chat-room';
   static const String skincareCatalog = '/skincare-catalog';
   static const String skincareDetail = '/skincare-detail';
+  static const String subscriptionPlan = '/subscription-plan';
+  static const String paymentWebview = '/payment-webview';
+  static const String subscriptionHistory = '/subscription-history';
 
   static final GoRouter router = GoRouter(
     initialLocation: login,
@@ -94,6 +101,21 @@ class AppRouter {
           final product = state.extra as SkincareProduct;
           return SkincareDetailPage(product: product);
         },
+      ),
+      GoRoute(
+        path: subscriptionPlan,
+        builder: (context, state) => const SubscriptionPlanPage(),
+      ),
+      GoRoute(
+        path: paymentWebview,
+        builder: (context, state) {
+          final url = state.extra as String? ?? '';
+          return PaymentWebViewPage(paymentUrl: url);
+        },
+      ),
+      GoRoute(
+        path: subscriptionHistory,
+        builder: (context, state) => const SubscriptionHistoryPage(),
       ),
       GoRoute(
         path: chatRoom,
