@@ -37,6 +37,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           emit(state.copyWith(
             status: ChatStatus.success,
             needsAiConsent: true,
+            pendingInitialMessage: event.initialMessage,
           ));
           return;
         }
@@ -54,8 +55,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
       add(const FetchMessagesEvent());
 
-      if (event.initialMessage != null && event.initialMessage!.trim().isNotEmpty) {
-        add(SendTextMessageEvent(event.initialMessage!));
+      final msgToSend = event.initialMessage ?? state.pendingInitialMessage;
+      if (msgToSend != null && msgToSend.trim().isNotEmpty) {
+        add(SendTextMessageEvent(msgToSend));
+        emit(state.copyWith(pendingInitialMessage: null));
       }
 
       // Start 3s polling timer for new messages
@@ -78,6 +81,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       add(InitChatEvent(
         doctorUuid: state.doctorUuid,
         isAiBot: true,
+        initialMessage: state.pendingInitialMessage,
       ));
     } catch (e) {
       emit(state.copyWith(

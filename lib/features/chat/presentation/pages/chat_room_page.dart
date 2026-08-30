@@ -239,7 +239,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
                     if (state.isSending)
                       Container(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -253,8 +253,10 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'Mengirim pesan...',
-                              style: GoogleFonts.roboto(fontSize: 11, color: Colors.grey),
+                              widget.doctor.isAiBot
+                                  ? 'Aura Skin AI sedang memproses & mengetik balasan...'
+                                  : 'Mengirim pesan...',
+                              style: GoogleFonts.roboto(fontSize: 11, color: darkGreen, fontWeight: FontWeight.w500),
                             ),
                           ],
                         ),

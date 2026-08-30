@@ -12,6 +12,8 @@ class ChatState {
   final bool isSending;
   final String? errorMessage;
 
+  final String? pendingInitialMessage;
+
   const ChatState({
     this.status = ChatStatus.initial,
     this.conversationUuid,
@@ -21,6 +23,7 @@ class ChatState {
     this.messages = const [],
     this.isSending = false,
     this.errorMessage,
+    this.pendingInitialMessage,
   });
 
   ChatState copyWith({
@@ -32,6 +35,7 @@ class ChatState {
     List<ChatMessage>? messages,
     bool? isSending,
     String? errorMessage,
+    String? pendingInitialMessage,
   }) {
     return ChatState(
       status: status ?? this.status,
@@ -42,6 +46,7 @@ class ChatState {
       messages: messages ?? this.messages,
       isSending: isSending ?? this.isSending,
       errorMessage: errorMessage,
+      pendingInitialMessage: pendingInitialMessage ?? this.pendingInitialMessage,
     );
   }
 }
