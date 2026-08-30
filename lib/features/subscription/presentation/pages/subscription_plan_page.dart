@@ -18,6 +18,7 @@ class SubscriptionPlanPage extends StatelessWidget {
   static const Color primaryGreen = Color(0xFF00BF83);
   static const Color darkGreen = Color(0xFF008D68);
   static const Color textColor = Color(0xFF101828);
+  static const Color orangeColor = Color(0xFFF97316);
 
   @override
   Widget build(BuildContext context) {
@@ -70,13 +71,13 @@ class SubscriptionPlanPage extends StatelessWidget {
               centerTitle: false,
             ),
             body: state.status == SubscriptionStatus.loading
-                ? const LoadingWidget(message: 'Memproses transaksi...')
+                ? const LoadingWidget(message: 'Memproses data langganan...')
                 : SingleChildScrollView(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Header Banner Box
+                        // Top Header Banner Box with Pricing & Plan Title
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(20),
@@ -89,79 +90,134 @@ class SubscriptionPlanPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: const [
                               BoxShadow(
-                                color: Color(0x2000BF83),
+                                color: Color(0x1A00BF83),
                                 blurRadius: 12,
                                 offset: Offset(0, 4),
                               ),
                             ],
                           ),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  LucideIcons.crown,
-                                  color: Colors.white,
-                                  size: 32,
-                                ),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.2),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Icon(
+                                      LucideIcons.crown,
+                                      color: Colors.white,
+                                      size: 22,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      isPro ? 'SkinCek PRO Aktif ✨' : 'SkinCek Pro Monthly',
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  if (!isPro)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFEF3C7),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Text(
+                                        'HEMAT 80%',
+                                        style: GoogleFonts.roboto(
+                                          fontSize: 10.5,
+                                          fontWeight: FontWeight.bold,
+                                          color: const Color(0xFFD97706),
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
-                              const SizedBox(height: 12),
-                              Text(
-                                isPro ? 'Status Akun: SkinCek PRO ✨' : 'Nikmati Fitur Kesehatan Kulit Tanpa Batas',
-                                style: GoogleFonts.roboto(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                                textAlign: TextAlign.center,
+                              const SizedBox(height: 14),
+
+                              // Pricing Row
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(
+                                    'Rp 15.000',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    ' / bulan',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 13,
+                                      color: Colors.white.withValues(alpha: 0.85),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Rp 180.000',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 12,
+                                      color: Colors.white.withValues(alpha: 0.6),
+                                      decoration: TextDecoration.lineThrough,
+                                      decorationColor: Colors.white.withValues(alpha: 0.6),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 6),
+                              const SizedBox(height: 8),
                               Text(
                                 isPro
-                                    ? 'Selamat! Akun kamu aktif berlangganan Pro.'
-                                    : 'Dapatkan akses tak terbatas untuk scan ML, chat dokter spesialis, dan asisten AI Aura Skin.',
+                                    ? 'Selamat! Akun Anda aktif menikmati seluruh akses fitur premium.'
+                                    : 'Akses tanpa batas untuk Scan ML Kulit, Chat Dokter Spesialis, & Aura Skin AI 24/7.',
                                 style: GoogleFonts.roboto(
-                                  fontSize: 12,
+                                  fontSize: 11.5,
                                   color: Colors.white.withValues(alpha: 0.9),
+                                  height: 1.35,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             ],
                           ),
                         ),
                         const SizedBox(height: 20),
 
-                        // Active Subscription Banner if Pro
-                        if (isPro) ...[
+                        // Active Subscription Expiry Card if Pro
+                        if (isPro && state.activeSubscription!.endsAt != null) ...[
                           Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(14),
                             decoration: BoxDecoration(
                               color: const Color(0xFFE6F8F2),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(14),
                               border: Border.all(color: primaryGreen),
                             ),
                             child: Row(
                               children: [
-                                const Icon(LucideIcons.checkCircle2, color: darkGreen, size: 24),
-                                const SizedBox(width: 12),
+                                const Icon(LucideIcons.checkCircle2, color: darkGreen, size: 22),
+                                const SizedBox(width: 10),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Paket Pro Aktif',
-                                        style: GoogleFonts.roboto(fontSize: 14, fontWeight: FontWeight.bold, color: darkGreen),
+                                        style: GoogleFonts.roboto(fontSize: 13.5, fontWeight: FontWeight.bold, color: darkGreen),
                                       ),
-                                      if (state.activeSubscription!.endsAt != null)
-                                        Text(
-                                          'Berlaku hingga: ${state.activeSubscription!.endsAt!.day}/${state.activeSubscription!.endsAt!.month}/${state.activeSubscription!.endsAt!.year}',
-                                          style: GoogleFonts.roboto(fontSize: 11, color: const Color(0xFF475569)),
-                                        ),
+                                      Text(
+                                        'Berlaku hingga: ${state.activeSubscription!.endsAt!.day}/${state.activeSubscription!.endsAt!.month}/${state.activeSubscription!.endsAt!.year}',
+                                        style: GoogleFonts.roboto(fontSize: 11, color: const Color(0xFF475569)),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -171,7 +227,7 @@ class SubscriptionPlanPage extends StatelessWidget {
                           const SizedBox(height: 20),
                         ],
 
-                        // Features List Title
+                        // Features List Section Header
                         Text(
                           'Keuntungan SkinCek Pro',
                           style: GoogleFonts.roboto(
@@ -182,7 +238,7 @@ class SubscriptionPlanPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
 
-                        // Features Comparison Cards
+                        // Features List Cards
                         _buildFeatureTile(
                           icon: LucideIcons.scanLine,
                           title: 'Scan Kulit ML Tanpa Batas',
@@ -198,112 +254,103 @@ class SubscriptionPlanPage extends StatelessWidget {
                           title: 'Chat Aura Skin AI 24/7 Tanpa Batas',
                           description: 'Tanyakan rekomendasi skincare dan tips perawatan ke asisten AI tanpa batas 10 pesan/hari.',
                         ),
-                        const SizedBox(height: 24),
-                        // Pricing Card
-                        if (!isPro) ...[
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: primaryGreen, width: 2),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color(0x0C000000),
-                                  blurRadius: 10,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                            ),
+                      ],
+                    ),
+                  ),
+
+            // Sticky Bottom Action Navigation Bar
+            bottomNavigationBar: isPro
+                ? null
+                : Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      border: Border(top: BorderSide(color: Color(0xFFF1F5F9))),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x0C000000),
+                          blurRadius: 12,
+                          offset: Offset(0, -4),
+                        ),
+                      ],
+                    ),
+                    child: SafeArea(
+                      child: Row(
+                        children: [
+                          Expanded(
                             child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'SkinCek Pro Monthly',
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: textColor,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Langganan 30 Hari (Otomatis memperpanjang)',
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 11,
-                                            color: const Color(0xFF64748B),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                Text(
+                                  'Total Pembayaran',
+                                  style: GoogleFonts.roboto(
+                                    fontSize: 11,
+                                    color: const Color(0xFF64748B),
+                                  ),
                                 ),
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 2),
                                 Row(
-                                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                                  textBaseline: TextBaseline.alphabetic,
                                   children: [
                                     Text(
                                       'Rp 15.000',
                                       style: GoogleFonts.roboto(
-                                        fontSize: 26,
+                                        fontSize: 17,
                                         fontWeight: FontWeight.bold,
-                                        color: darkGreen,
+                                        color: orangeColor,
                                       ),
                                     ),
                                     Text(
-                                      ' / bulan',
+                                      ' /bln',
                                       style: GoogleFonts.roboto(
-                                        fontSize: 13,
+                                        fontSize: 11,
                                         color: const Color(0xFF64748B),
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 16),
-                                SizedBox(
-                                  width: double.infinity,
-                                  height: 48,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      context.read<SubscriptionBloc>().add(
-                                            const CheckoutSubscriptionEvent(),
-                                          );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: primaryGreen,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
-                                      elevation: 0,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(LucideIcons.creditCard, color: Colors.white, size: 18),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          'Upgrade ke SkinCek Pro',
-                                          style: GoogleFonts.roboto(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                           ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            flex: 2,
+                            child: SizedBox(
+                              height: 46,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  context.push(
+                                    AppRouter.paymentWebview,
+                                    extra: '',
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: primaryGreen,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(LucideIcons.crown, color: Colors.white, size: 16),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Upgrade SkinCek Pro',
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 13.5,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
-                      ],
+                      ),
                     ),
                   ),
           );
@@ -319,7 +366,7 @@ class SubscriptionPlanPage extends StatelessWidget {
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -329,12 +376,12 @@ class SubscriptionPlanPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(7),
             decoration: const BoxDecoration(
               color: Color(0xFFE6F8F2),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: darkGreen, size: 18),
+            child: Icon(icon, color: darkGreen, size: 17),
           ),
           const SizedBox(width: 12),
           Expanded(

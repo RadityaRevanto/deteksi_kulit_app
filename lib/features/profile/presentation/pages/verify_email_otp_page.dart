@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../app/routes/app_router.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/widgets/app_status_dialog.dart';
 import '../../../../core/widgets/loading_widget.dart';
@@ -143,7 +144,7 @@ class _VerifyEmailOtpPageState extends State<VerifyEmailOtpPage> {
                   message: state.message,
                   type: AppStatusDialogType.success,
                 );
-                context.pop(true);
+                context.go(AppRouter.main);
               }
             },
             builder: (context, state) {

@@ -215,31 +215,37 @@ class ProfilePage extends StatelessWidget {
             }
 
             if (state is ProfileLoaded) {
-              return SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Column(
-                  children: [
-                    ProfileHeader(
-                      profile: state.profile,
-                      onVerifyEmailPressed: () async {
-                        final verified = await context.push<bool>(
-                          AppRouter.verifyEmailOtp,
-                          extra: state.profile.email,
-                        );
-                        if (verified == true && context.mounted) {
-                          context.read<ProfileBloc>().add(ProfileRequested());
-                        }
-                      },
-                      onEditPressed: () async {
-                        final updated = await context.push<bool>(
-                          AppRouter.editProfile,
-                          extra: state.profile,
-                        );
-                        if (updated == true && context.mounted) {
-                          context.read<ProfileBloc>().add(ProfileRequested());
-                        }
-                      },
-                    ),
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<ProfileBloc>().add(ProfileRequested());
+                },
+                color: primaryGreen,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Column(
+                    children: [
+                      ProfileHeader(
+                        profile: state.profile,
+                        onVerifyEmailPressed: () async {
+                          await context.push(
+                            AppRouter.verifyEmailOtp,
+                            extra: state.profile.email,
+                          );
+                          if (context.mounted) {
+                            context.read<ProfileBloc>().add(ProfileRequested());
+                          }
+                        },
+                        onEditPressed: () async {
+                          await context.push(
+                            AppRouter.editProfile,
+                            extra: state.profile,
+                          );
+                          if (context.mounted) {
+                            context.read<ProfileBloc>().add(ProfileRequested());
+                          }
+                        },
+                      ),
                     if (!state.profile.emailVerified) ...[
                       const SizedBox(height: 12),
                       Container(
@@ -476,8 +482,9 @@ class ProfilePage extends StatelessWidget {
                     const SizedBox(height: 24),
                   ],
                 ),
-              );
-            }
+              ),
+            );
+          }
             return const SizedBox.shrink();
           },
         ),
