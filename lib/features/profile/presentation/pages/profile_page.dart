@@ -246,6 +246,7 @@ class ProfilePage extends StatelessWidget {
                           }
                         },
                       ),
+                      const SizedBox(height: 12),
                     if (!state.profile.emailVerified) ...[
                       const SizedBox(height: 12),
                       Container(
@@ -322,75 +323,77 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ],
-                    const SizedBox(height: 12),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF008D68), Color(0xFF00BF83)],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
+                    if (state.profile.subscriptionStatus.toLowerCase() != 'pro' &&
+                        state.profile.subscriptionStatus.toLowerCase() != 'active') ...[
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF008D68), Color(0xFF00BF83)],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x1A00BF83),
+                              blurRadius: 10,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
                         ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x1A00BF83),
-                            blurRadius: 10,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(LucideIcons.crown, color: Colors.white, size: 28),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Upgrade ke SkinCek Pro ✨',
-                                  style: GoogleFonts.roboto(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                        child: Row(
+                          children: [
+                            const Icon(LucideIcons.crown, color: Colors.white, size: 28),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Upgrade ke SkinCek Pro ✨',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  'Scan & Chat Dokter tanpa batas kuota',
-                                  style: GoogleFonts.roboto(
-                                    fontSize: 11,
-                                    color: Colors.white.withValues(alpha: 0.9),
+                                  Text(
+                                    'Scan & Chat Dokter tanpa batas kuota',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 11,
+                                      color: Colors.white.withValues(alpha: 0.9),
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              context.push(AppRouter.subscriptionPlan);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              'Langganan',
-                              style: GoogleFonts.roboto(
-                                fontSize: 11.5,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF008D68),
+                                ],
                               ),
                             ),
-                          ),
-                        ],
+                            ElevatedButton(
+                              onPressed: () {
+                                context.push(AppRouter.subscriptionPlan);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                elevation: 0,
+                              ),
+                              child: Text(
+                                'Langganan',
+                                style: GoogleFonts.roboto(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF008D68),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                     ProfileStatsCard(profile: state.profile),
                     const SizedBox(height: 12),
                     Container(

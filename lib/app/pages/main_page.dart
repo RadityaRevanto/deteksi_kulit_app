@@ -8,6 +8,7 @@ import '../bloc/navigation/navigation_event.dart';
 import '../bloc/navigation/navigation_state.dart';
 
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/skincare/presentation/pages/skincare_catalog_page.dart';
 import '../../features/history/presentation/pages/history_page.dart';
 import '../../features/dokter/presentation/pages/konfirmasi_dokter_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
@@ -22,8 +23,9 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final pages = const [
       HomePage(),
-      HistoryPage(),
+      SkincareCatalogPage(),
       KonfirmasiDokterPage(),
+      HistoryPage(),
       ProfilePage(),
     ];
 
@@ -31,9 +33,7 @@ class MainPage extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.white,
-
           body: IndexedStack(index: state.currentIndex, children: pages),
-
           bottomNavigationBar: Container(
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -62,48 +62,60 @@ class MainPage extends StatelessWidget {
                         isSelected: state.currentIndex == 0,
                         onTap: () {
                           context.read<NavigationBloc>().add(
-                            NavigationTabChanged(0),
-                          );
+                                NavigationTabChanged(0),
+                              );
                         },
                       ),
                     ),
-
                     Expanded(
                       child: _NavItem(
-                        label: 'Riwayat',
-                        icon: LucideIcons.clock3,
-                        activeIcon: LucideIcons.clock3,
+                        label: 'Produk',
+                        icon: LucideIcons.shoppingBag,
+                        activeIcon: LucideIcons.shoppingBag,
                         isSelected: state.currentIndex == 1,
                         onTap: () {
                           context.read<NavigationBloc>().add(
-                            NavigationTabChanged(1),
-                          );
+                                NavigationTabChanged(1),
+                              );
                         },
                       ),
                     ),
                     Expanded(
                       child: _NavItem(
                         label: 'Konsultasi',
-                        icon: LucideIcons.messageSquare,
-                        activeIcon: LucideIcons.messageSquare,
+                        icon: LucideIcons.stethoscope,
+                        activeIcon: LucideIcons.stethoscope,
                         isSelected: state.currentIndex == 2,
                         onTap: () {
                           context.read<NavigationBloc>().add(
-                            NavigationTabChanged(2),
-                          );
+                                NavigationTabChanged(2),
+                              );
                         },
                       ),
                     ),
                     Expanded(
                       child: _NavItem(
-                        label: 'Profil',
-                        icon: LucideIcons.userRound,
-                        activeIcon: LucideIcons.userRound,
+                        label: 'Riwayat',
+                        icon: LucideIcons.clock3,
+                        activeIcon: LucideIcons.clock3,
                         isSelected: state.currentIndex == 3,
                         onTap: () {
                           context.read<NavigationBloc>().add(
-                            NavigationTabChanged(3),
-                          );
+                                NavigationTabChanged(3),
+                              );
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: _NavItem(
+                        label: 'Profile',
+                        icon: LucideIcons.userRound,
+                        activeIcon: LucideIcons.userRound,
+                        isSelected: state.currentIndex == 4,
+                        onTap: () {
+                          context.read<NavigationBloc>().add(
+                                NavigationTabChanged(4),
+                              );
                         },
                       ),
                     ),
@@ -157,14 +169,12 @@ class _NavItem extends StatelessWidget {
                 color: isSelected ? primaryGreen : inactiveColor,
               ),
             ),
-
             const SizedBox(height: 4),
-
             AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 180),
               style: GoogleFonts.roboto(
-                fontSize: 11,
-                height: 1.6,
+                fontSize: 10.5,
+                height: 1.5,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 color: isSelected ? primaryGreen : inactiveColor,
               ),
@@ -176,3 +186,4 @@ class _NavItem extends StatelessWidget {
     );
   }
 }
+ 

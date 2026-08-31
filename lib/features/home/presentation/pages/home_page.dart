@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../app/routes/app_router.dart';
+import '../../../skincare/domain/entities/skincare_product.dart';
 import '../widgets/greeting_section.dart';
 import '../widgets/scan_button.dart';
 import '../widgets/feature_card.dart';
@@ -13,7 +14,36 @@ class HomePage extends StatelessWidget {
 
   static const Color primaryGreen = Color(0xFF00BF83);
   static const Color textColor = Color(0xFF151918);
-  static const Color mutedColor = Color(0xFF7B8581);
+
+  static const List<SkincareProduct> recommendedProducts = [
+    SkincareProduct(
+      uuid: 'p1',
+      name: 'CeraVe Hydrating Cleanser',
+      category: 'Pembersih Wajah',
+      gender: 'Unisex',
+      keyIngredients: 'Ceramides & Hyaluronic Acid',
+      usageInstruction: 'Gunakan pagi dan malam hari pada wajah yang basah.',
+      isActive: true,
+    ),
+    SkincareProduct(
+      uuid: 'p2',
+      name: 'Somethinc Niacinamide Serum',
+      category: 'Serum Wajah',
+      gender: 'Unisex',
+      keyIngredients: 'Niacinamide 10% & Centella',
+      usageInstruction: 'Teteskan 3-5 tetes secara merata pada kulit wajah.',
+      isActive: true,
+    ),
+    SkincareProduct(
+      uuid: 'p3',
+      name: 'Anessa Perfect UV Sunscreen',
+      category: 'Tabir Surya',
+      gender: 'Unisex',
+      keyIngredients: 'Zinc Oxide & Hyaluronic Acid',
+      usageInstruction: 'Oleskan 15 menit sebelum terpapar sinar matahari.',
+      isActive: true,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +100,16 @@ class HomePage extends StatelessWidget {
                   ),
                   Expanded(
                     child: FeatureCard(
+                      title: 'Produk Skincare',
+                      icon: LucideIcons.shoppingBag,
+                      color: const Color(0xFF8B5CF6),
+                      onTap: () {
+                        context.push(AppRouter.skincareCatalog);
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: FeatureCard(
                       title: 'Riwayat Analisis',
                       icon: LucideIcons.history,
                       color: const Color(0xFF3B82F6),
@@ -78,34 +118,79 @@ class HomePage extends StatelessWidget {
                   ),
                   Expanded(
                     child: FeatureCard(
-                      title: 'Tips Kulit',
-                      icon: LucideIcons.sparkles,
+                      title: 'Langganan Pro',
+                      icon: LucideIcons.crown,
                       color: const Color(0xFFF59E0B),
-                      onTap: () {},
-                    ),
-                  ),
-                  Expanded(
-                    child: FeatureCard(
-                      title: 'Klinik Terdekat',
-                      icon: LucideIcons.hospital,
-                      color: const Color(0xFFEC4899),
-                      onTap: () {},
+                      onTap: () {
+                        context.push(AppRouter.subscriptionPlan);
+                      },
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
-              Text(
-                'Artikel Rekomendasi',
-                style: GoogleFonts.roboto(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: textColor,
-                  letterSpacing: -0.2,
-                ),
+
+              // Rekomendasi Skincare Header Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Rekomendasi Skincare',
+                    style: GoogleFonts.roboto(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: textColor,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      context.push(AppRouter.skincareCatalog);
+                    },
+                    child: Row(
+                      children: [
+                        Text(
+                          'Lihat Semua',
+                          style: GoogleFonts.roboto(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: primaryGreen,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        const Icon(
+                          LucideIcons.chevronRight,
+                          size: 14,
+                          color: primaryGreen,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
-              const _FeaturedTipCard(),
+
+              // Recommended Skincare Horizontal Product Cards List
+              SizedBox(
+                height: 160,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: recommendedProducts.length,
+                  separatorBuilder: (context, index) => const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    final product = recommendedProducts[index];
+                    return _HomeProductCard(
+                      product: product,
+                      onTap: () {
+                        context.push(
+                          AppRouter.skincareDetail,
+                          extra: product,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
               const SizedBox(height: 16),
             ],
           ),
@@ -115,108 +200,121 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class _FeaturedTipCard extends StatelessWidget {
-  const _FeaturedTipCard();
+class _HomeProductCard extends StatelessWidget {
+  final SkincareProduct product;
+  final VoidCallback onTap;
+
+  const _HomeProductCard({
+    required this.product,
+    required this.onTap,
+  });
+
+  static const Color primaryGreen = Color(0xFF00BF83);
+  static const Color textColor = Color(0xFF151918);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF151918), Color(0xFF2D3432)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 170,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x08000000),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
         ),
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x1F000000),
-            blurRadius: 12,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 9,
-                  vertical: 3,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF00BF83).withValues(alpha: 0.25),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  'Tips Dokter Hari Ini',
-                  style: GoogleFonts.roboto(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF00BF83),
-                  ),
-                ),
-              ),
-              const Icon(LucideIcons.bookmark, size: 16, color: Colors.white70),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            '5 Langkah Mudah Menjaga Kelembapan Kulit Wajah di Cuaca Panas',
-            style: GoogleFonts.roboto(
-              fontSize: 14,
-              height: 1.35,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Gunakan sunscreen dengan SPF minimal 30 dan penuhi asupan cairan tubuh setiap hari.',
-            style: GoogleFonts.roboto(
-              fontSize: 11,
-              height: 1.45,
-              fontWeight: FontWeight.w400,
-              color: Colors.white70,
-            ),
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Text(
-                '3 menit baca',
-                style: GoogleFonts.roboto(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white54,
-                ),
-              ),
-              const Spacer(),
-              Row(
-                children: [
-                  Text(
-                    'Baca Selengkapnya',
-                    style: GoogleFonts.roboto(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF00BF83),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE6F8F2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        LucideIcons.sparkles,
+                        color: primaryGreen,
+                        size: 16,
+                      ),
                     ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        product.category,
+                        style: GoogleFonts.roboto(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF64748B),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  product.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.roboto(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                    height: 1.25,
                   ),
-                  const SizedBox(width: 3),
-                  const Icon(
-                    LucideIcons.chevronRight,
-                    size: 13,
-                    color: Color(0xFF00BF83),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  product.keyIngredients,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.roboto(
+                    fontSize: 10.5,
+                    color: const Color(0xFF64748B),
+                    height: 1.2,
                   ),
-                ],
-              ),
-            ],
-          ),
-        ],
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text(
+                  'Lihat Detail',
+                  style: GoogleFonts.roboto(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: primaryGreen,
+                  ),
+                ),
+                const SizedBox(width: 2),
+                const Icon(
+                  LucideIcons.chevronRight,
+                  size: 12,
+                  color: primaryGreen,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

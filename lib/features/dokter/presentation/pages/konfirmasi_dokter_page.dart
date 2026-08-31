@@ -10,7 +10,6 @@ import '../../../../core/widgets/loading_widget.dart';
 import '../../data/datasources/doctor_remote_data_source.dart';
 import '../../domain/entities/doctor.dart';
 import '../widgets/doctor_card.dart';
-import '../widgets/schedule_picker_bottom_sheet.dart';
 
 class KonfirmasiDokterPage extends StatefulWidget {
   const KonfirmasiDokterPage({super.key});
@@ -80,101 +79,6 @@ class _KonfirmasiDokterPageState extends State<KonfirmasiDokterPage> {
       }
       return matchesSearch;
     }).toList();
-  }
-
-  void _showScheduleBottomSheet(Doctor doctor) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return SchedulePickerBottomSheet(
-          doctor: doctor,
-          onConfirm: () {
-            Navigator.pop(context);
-            _showSuccessDialog(doctor);
-          },
-        );
-      },
-    );
-  }
-
-  void _showSuccessDialog(Doctor doctor) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          contentPadding: const EdgeInsets.all(24),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFE6F8F2),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  LucideIcons.checkCircle2,
-                  color: Color(0xFF00BF83),
-                  size: 36,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Janji Konsultasi Berhasil!',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.roboto(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF151918),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Anda telah menjadwalkan konsultasi dengan ${doctor.name}. Hasil analisis AI Anda telah dilampirkan.',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.roboto(
-                  fontSize: 12,
-                  height: 1.4,
-                  color: const Color(0xFF7B8581),
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                height: 46,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    context.pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00BF83),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    'Kembali ke Beranda',
-                    style: GoogleFonts.roboto(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   @override
